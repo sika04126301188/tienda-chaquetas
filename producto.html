@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+  Chaket · plantilla premium de All Pixels (allpixels.dev)
+  Ficha de producto: visor 3D en 360°, colores y tallas con existencias, cesta y productos relacionados. Se rellena con ?p=id&c=color.
+  HTML semántico sin clases ni divs; todo el CSS va en <style>.
+-->
+<title>Chaket Plumón ligero — Chaket</title>
+<meta name="description" content="Mira la chaqueta girar en 360°, elige color y talla con las existencias al momento y añádela a la cesta.">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" type="image/png" href="img/icono.png">
+<style>
+  /* ============ 1. PALETA ============ */
+  :root {
+    --blanco: #FFFFFF;
+    --tinta: #111114;        /* negro de la marca */
+    --texto: #3B3B42;
+    --suave: #63636C;
+    --hueso: #F6F5F2;        /* blanco roto para fondos */
+    --gris: #F2F2F4;
+    --gris-2: #E5E5E9;
+    --linea: rgba(17, 17, 20, .1);
+    --rojo: #C8102E;         /* el rojo de la chaqueta estrella */
+    --rojo-oscuro: #A50F23;
+    --noche: #120304;        /* negro con un punto de vino, para el pie y las bandas oscuras */
+    --display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+    --sans: "Manrope", -apple-system, "Segoe UI", Arial, sans-serif;
+    --curva: cubic-bezier(.2, .7, .2, 1);
+    --ancho: 1320px;
+    --margen: clamp(1rem, 4vw, 3rem);
+    --sombra: 0 30px 60px -30px rgba(17, 17, 20, .35);
+    --sombra-suave: 0 16px 36px -20px rgba(17, 17, 20, .28);
+  }
+
+  /* ============ 2. BASE ============ */
+  a {
+    text-decoration: none;
+    color: var(--tinta);
+    transition: color .3s ease, background .3s ease, border-color .3s ease, transform .4s var(--curva);
+  }
+  a:hover { color: var(--rojo); }
+
+  @font-face { font-family: "Bodoni Moda"; src: url("fonts/bodoni-moda-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+  @font-face { font-family: "Bodoni Moda"; src: url("fonts/bodoni-moda-latin-500-italic.woff2") format("woff2"); font-weight: 500; font-style: italic; font-display: swap; }
+  @font-face { font-family: "Bodoni Moda"; src: url("fonts/bodoni-moda-latin-600-normal.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+  @font-face { font-family: "Bodoni Moda"; src: url("fonts/bodoni-moda-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+  @font-face { font-family: "Manrope"; src: url("fonts/manrope-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Manrope"; src: url("fonts/manrope-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+  @font-face { font-family: "Manrope"; src: url("fonts/manrope-latin-600-normal.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+  @font-face { font-family: "Manrope"; src: url("fonts/manrope-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+  body {
+    font-family: var(--sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--texto);
+    background: var(--blanco);
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+  }
+  [hidden] { display: none !important; }
+  ul, ol, menu { list-style: none; }
+  figure { position: relative; }
+  img { display: block; width: 100%; height: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 600; color: var(--tinta); line-height: 1.02; letter-spacing: -.02em; text-wrap: balance; }
+  h1 em, h2 em, h3 em { font-style: italic; font-weight: 500; color: var(--rojo); }
+  h2 { font-size: clamp(2.2rem, 5vw, 4.2rem); }
+  p { text-wrap: pretty; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; border: 0; background: none; }
+  :focus-visible { outline: 2px solid var(--rojo); outline-offset: 3px; }
+  ::selection { background: var(--rojo); color: var(--blanco); }
+
+  /* Rótulo pequeño con punto rojo: «Colección 2026» */
+  main > section > header > p:first-of-type {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    font-size: .74rem;
+    font-weight: 700;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--suave);
+  }
+  main > section > header > p:first-of-type::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--rojo);
+    box-shadow: 0 0 0 4px rgba(200, 16, 46, .14);
+  }
+
+  /* ============ 3. CABECERA ============ */
+  body > header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem var(--margen);
+    transition: background .4s ease, padding .4s var(--curva), box-shadow .4s ease;
+  }
+  body > header[data-scroll] {
+    padding-block: .6rem;
+    background: rgba(255, 255, 255, .84);
+    backdrop-filter: blur(18px) saturate(1.4);
+    box-shadow: 0 1px 0 var(--linea);
+  }
+  /* Logotipo: «ch» en un círculo + el nombre en Bodoni */
+  body > header > a:first-of-type {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    width: fit-content;
+    font-family: var(--display);
+    font-size: 1.55rem;
+    font-weight: 700;
+    letter-spacing: -.03em;
+  }
+  body > header > a:first-of-type b {
+    display: grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border: 1.5px solid var(--tinta);
+    border-radius: 50%;
+    font-family: var(--display);
+    font-size: .9rem;
+    font-style: italic;
+    font-weight: 500;
+    transition: background .3s ease, color .3s ease, rotate .6s var(--curva);
+  }
+  body > header > a:first-of-type:hover { color: var(--tinta); }
+  body > header > a:first-of-type:hover b { background: var(--tinta); color: var(--blanco); rotate: -12deg; }
+  body > header nav ul { display: flex; gap: .2rem; padding: .3rem; border-radius: 40px; background: rgba(255, 255, 255, .72); box-shadow: inset 0 0 0 1px var(--linea); }
+  body > header nav a { display: block; padding: .5rem 1.05rem; border-radius: 40px; font-size: .9rem; font-weight: 600; color: var(--texto); }
+  body > header nav a:hover { background: var(--gris); color: var(--tinta); }
+  body > header nav a[aria-current] { background: var(--tinta); color: var(--blanco); }
+  /* Botón de la cesta: bolsa dibujada con CSS y número de productos */
+  body > header > button:first-of-type {
+    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .5rem .55rem .5rem 1rem;
+    border-radius: 40px;
+    border: 1.5px solid var(--tinta);
+    background: var(--blanco);
+    font-size: .9rem;
+    font-weight: 700;
+    color: var(--tinta);
+    transition: background .3s ease, color .3s ease;
+  }
+  body > header > button:first-of-type::before {
+    content: "";
+    width: 15px;
+    height: 13px;
+    margin-top: 4px;
+    border: 2px solid currentColor;
+    border-radius: 3px 3px 5px 5px;
+    background: radial-gradient(circle at 50% -2px, transparent 4px, currentColor 4.5px, currentColor 6px, transparent 6.5px) 0 -7px / 100% 12px no-repeat;
+  }
+  body > header > button:first-of-type b {
+    display: grid;
+    place-items: center;
+    min-width: 1.65rem;
+    height: 1.65rem;
+    padding: 0 .4rem;
+    border-radius: 20px;
+    background: var(--rojo);
+    font-size: .78rem;
+    color: var(--blanco);
+  }
+  body > header > button:first-of-type[data-salto] b { animation: salto .6s var(--curva); }
+  body > header > button:first-of-type:hover { background: var(--tinta); color: var(--blanco); }
+  body > header > button:nth-of-type(2) {
+    display: none;
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--linea);
+    background: var(--blanco);
+  }
+  body > header > button:nth-of-type(2)::before,
+  body > header > button:nth-of-type(2)::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 18px;
+    height: 2px;
+    margin: -1px 0 0 -9px;
+    border-radius: 2px;
+    background: var(--tinta);
+    transition: transform .4s var(--curva);
+  }
+  body > header > button:nth-of-type(2)::before { transform: translateY(-4px); }
+  body > header > button:nth-of-type(2)::after { transform: translateY(4px); }
+  body > header > button:nth-of-type(2)[aria-expanded="true"]::before { transform: rotate(45deg); }
+  body > header > button:nth-of-type(2)[aria-expanded="true"]::after { transform: rotate(-45deg); }
+
+  /* ============ 4. PANEL DE LA CESTA ============ */
+  body > dialog {
+    width: min(460px, 100%);
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0 0 0 auto;
+    padding: 0;
+    border: 0;
+    background: var(--blanco);
+    color: var(--texto);
+  }
+  body > dialog[open] { display: grid; grid-template-rows: auto auto auto minmax(0, 1fr) auto; animation: panel .5s var(--curva); }
+  body > dialog::backdrop { background: rgba(17, 17, 20, .38); backdrop-filter: blur(4px); animation: aparecer .4s ease; }
+  body > dialog > header { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 1.6rem 1rem; }
+  body > dialog h2 { font-size: 2rem; }
+  body > dialog > header button { width: 42px; height: 42px; border-radius: 50%; background: var(--gris); transition: background .3s ease, color .3s ease, rotate .4s var(--curva); }
+  body > dialog > header button:hover { background: var(--tinta); color: var(--blanco); rotate: 90deg; }
+  body > dialog > p { padding: 0 1.6rem; font-size: .88rem; font-weight: 600; color: var(--tinta); }
+  body > dialog > progress { width: calc(100% - 3.2rem); height: 6px; margin: .6rem 1.6rem 1.2rem; border: 0; border-radius: 6px; background: var(--gris-2); overflow: hidden; appearance: none; }
+  body > dialog > progress::-webkit-progress-bar { background: var(--gris-2); }
+  body > dialog > progress::-webkit-progress-value { background: var(--rojo); border-radius: 6px; transition: width .5s var(--curva); }
+  body > dialog > progress::-moz-progress-bar { background: var(--rojo); border-radius: 6px; }
+  body > dialog > ul { display: grid; align-content: start; gap: .8rem; padding: 0 1.6rem 1rem; overflow-y: auto; }
+  body > dialog > ul li {
+    display: grid;
+    grid-template-columns: 84px minmax(0, 1fr) auto;
+    grid-template-areas: "foto texto importe" "foto cantidad quitar";
+    align-items: center;
+    gap: .4rem .9rem;
+    padding: .7rem;
+    border-radius: 20px;
+    background: var(--hueso);
+  }
+  body > dialog > ul li:only-child:not(:has(figure)) { display: block; padding: 2rem 1.4rem; text-align: center; color: var(--suave); }
+  body > dialog > ul li figure { grid-area: foto; aspect-ratio: 1; border-radius: 14px; background: var(--blanco); }
+  body > dialog > ul li figure img { height: 100%; object-fit: contain; padding: .3rem; }
+  body > dialog > ul li p:first-of-type { grid-area: texto; display: grid; line-height: 1.35; }
+  body > dialog > ul li p:first-of-type a { font-weight: 700; }
+  body > dialog > ul li p:first-of-type small { font-size: .82rem; color: var(--suave); }
+  body > dialog > ul li p:last-of-type { grid-area: cantidad; display: inline-flex; align-items: center; width: fit-content; border-radius: 30px; background: var(--blanco); box-shadow: inset 0 0 0 1px var(--linea); }
+  body > dialog > ul li p:last-of-type button { width: 32px; height: 32px; border-radius: 50%; font-size: 1.05rem; transition: background .25s ease; }
+  body > dialog > ul li p:last-of-type button:hover { background: var(--gris); }
+  body > dialog > ul li p:last-of-type output { min-width: 1.6rem; text-align: center; font-weight: 700; }
+  body > dialog > ul li b { grid-area: importe; font-weight: 700; color: var(--tinta); }
+  body > dialog > ul li > button { grid-area: quitar; justify-self: end; font-size: .82rem; font-weight: 600; color: var(--suave); text-decoration: underline; text-underline-offset: 3px; }
+  body > dialog > ul li > button:hover { color: var(--rojo); }
+  body > dialog > footer { display: grid; gap: .8rem; padding: 1.2rem 1.6rem 1.6rem; border-top: 1px solid var(--linea); }
+  body > dialog dl { display: grid; grid-template-columns: 1fr auto; gap: .35rem; font-size: .95rem; }
+  body > dialog dl dd { text-align: right; font-weight: 700; color: var(--tinta); }
+  body > dialog dl dd:first-of-type { font-family: var(--display); font-size: 1.35rem; }
+  body > dialog footer a { display: flex; justify-content: center; gap: .6rem; padding: 1.05rem; border-radius: 40px; background: var(--tinta); font-weight: 700; color: var(--blanco); }
+  body > dialog footer a::after { content: "\2192"; }
+  body > dialog footer a:hover { background: var(--rojo); color: var(--blanco); }
+  body > dialog footer a[aria-disabled] { opacity: .35; pointer-events: none; }
+  body > dialog footer button { padding: .6rem; font-weight: 600; color: var(--suave); }
+  body > dialog footer button:hover { color: var(--tinta); }
+
+  /* ============ 5. AVISO AL AÑADIR ============ */
+  body > aside {
+    position: fixed;
+    right: var(--margen);
+    bottom: var(--margen);
+    z-index: 60;
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: .9rem;
+    width: min(420px, calc(100% - 2rem));
+    padding: .7rem .7rem .7rem .7rem;
+    border-radius: 22px;
+    background: var(--tinta);
+    box-shadow: var(--sombra);
+    color: rgba(255, 255, 255, .78);
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 20px;
+    transition: opacity .35s ease, translate .5s var(--curva), visibility 0s .5s;
+  }
+  body > aside[data-visible] { opacity: 1; visibility: visible; translate: 0 0; transition: opacity .35s ease, translate .5s var(--curva); }
+  body > aside figure { aspect-ratio: 1; border-radius: 14px; background: var(--blanco); }
+  body > aside figure img { height: 100%; object-fit: contain; padding: .25rem; }
+  body > aside p { display: grid; font-size: .85rem; line-height: 1.35; }
+  body > aside strong { color: var(--blanco); }
+  body > aside button { padding: .7rem 1rem; border-radius: 30px; background: var(--blanco); font-size: .85rem; font-weight: 700; color: var(--tinta); transition: background .3s ease, color .3s ease; }
+  body > aside button:hover { background: var(--rojo); color: var(--blanco); }
+
+  /* ============ 6. PIE: el Club sobre un horizonte rojo y una tarjeta con los enlaces ============ */
+  body > footer {
+    --horizonte: 50%;
+    position: relative;
+    display: grid;
+    justify-items: center;
+    padding: clamp(5rem, 10vw, 8.5rem) var(--margen) 0;
+    overflow: hidden;
+    isolation: isolate;
+    background:
+      radial-gradient(42% 7% at 50% var(--horizonte), rgba(255, 150, 140, .5), transparent 80%),
+      radial-gradient(70% 16% at 50% var(--horizonte), rgba(240, 40, 60, .85), transparent 78%),
+      radial-gradient(95% 28% at 50% var(--horizonte), rgba(170, 14, 36, .9), transparent 80%),
+      radial-gradient(130% 45% at 50% var(--horizonte), rgba(90, 8, 20, .9), transparent 82%),
+      var(--noche);
+    color: rgba(255, 255, 255, .74);
+  }
+  /* Estrellas que titilan sobre el horizonte */
+  body > footer::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 40%;
+    z-index: -1;
+    background:
+      radial-gradient(1.5px 1.5px at 8% 22%, #FFFFFF, transparent),
+      radial-gradient(1px 1px at 17% 61%, #FFFFFF, transparent),
+      radial-gradient(1.5px 1.5px at 26% 38%, rgba(255, 255, 255, .8), transparent),
+      radial-gradient(1px 1px at 33% 78%, #FFFFFF, transparent),
+      radial-gradient(2px 2px at 41% 12%, rgba(255, 255, 255, .7), transparent),
+      radial-gradient(1px 1px at 47% 70%, #FFFFFF, transparent),
+      radial-gradient(1.5px 1.5px at 58% 84%, #FFFFFF, transparent),
+      radial-gradient(1px 1px at 64% 30%, rgba(255, 255, 255, .8), transparent),
+      radial-gradient(2px 2px at 72% 66%, #FFFFFF, transparent),
+      radial-gradient(1px 1px at 79% 18%, #FFFFFF, transparent),
+      radial-gradient(1.5px 1.5px at 86% 52%, rgba(255, 255, 255, .8), transparent),
+      radial-gradient(1px 1px at 93% 80%, #FFFFFF, transparent);
+    animation: titilar 5s ease-in-out infinite alternate;
+  }
+  /* Destellos en forma de cruz, como en el cielo del horizonte */
+  body > footer::after {
+    content: "\2726       \2726                    \2726            \2726";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(var(--horizonte) - 9rem);
+    z-index: -1;
+    font-size: .7rem;
+    letter-spacing: .4rem;
+    text-align: center;
+    white-space: pre;
+    color: rgba(255, 210, 210, .55);
+    animation: titilar 3.4s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes titilar { from { opacity: .45; } to { opacity: 1; } }
+
+  /* El Club: título en dos líneas, texto y correo */
+  body > footer > section:first-of-type { display: grid; justify-items: center; gap: 1.2rem; max-width: 980px; text-align: center; }
+  body > footer h2 { font-size: clamp(2.4rem, 5.2vw, 4.6rem); line-height: 1.02; color: var(--blanco); }
+  body > footer h2 em { color: #FF8A9A; }
+  body > footer > section:first-of-type > p { max-width: 540px; font-size: 1.05rem; }
+  body > footer form { display: flex; gap: .4rem; width: min(470px, 100%); margin-top: .6rem; padding: .35rem; border-radius: 40px; background: rgba(255, 255, 255, .09); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18); backdrop-filter: blur(10px); }
+  body > footer input { flex: 1; min-width: 0; padding: 0 1.1rem; border: 0; outline: 0; background: transparent; color: var(--blanco); }
+  body > footer input::placeholder { color: rgba(255, 255, 255, .62); }
+  body > footer form button { padding: .85rem 1.4rem; border-radius: 40px; background: linear-gradient(180deg, #F0334B, var(--rojo)); box-shadow: 0 10px 30px -8px rgba(240, 51, 75, .8); font-weight: 700; color: var(--blanco); transition: background .3s ease, color .3s ease, transform .4s var(--curva); }
+  body > footer form button:hover { background: var(--blanco); color: var(--tinta); transform: translateY(-2px); }
+  body > footer output { display: block; min-height: 1.4em; font-size: .9rem; color: #FFC2CA; }
+
+  /* La tarjeta: marca y redes a la izquierda, tres columnas de enlaces */
+  body > footer > section:last-of-type {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr));
+    gap: 2rem 2.4rem;
+    width: min(1120px, 100%);
+    margin-top: clamp(5rem, 9vw, 7.5rem);
+    padding: 2.6rem clamp(1.4rem, 3vw, 2.8rem) 0;
+    border-radius: 28px 28px 0 0;
+    background: linear-gradient(180deg, rgba(40, 6, 10, .72), rgba(16, 3, 5, .94) 60%);
+    backdrop-filter: blur(18px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), inset 0 0 0 1px rgba(255, 255, 255, .06);
+  }
+  body > footer > section:last-of-type > header { display: grid; align-content: start; gap: .9rem; }
+  body > footer > section:last-of-type > header > a {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    width: fit-content;
+    font-family: var(--display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    color: var(--blanco);
+  }
+  body > footer > section:last-of-type > header > a b {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1.5px solid #FF5C6F;
+    border-radius: 50%;
+    font-size: .85rem;
+    font-style: italic;
+    font-weight: 500;
+    color: #FF5C6F;
+  }
+  body > footer > section:last-of-type > header > p { font-weight: 700; color: var(--blanco); }
+  /* Redes: iconos dibujados con CSS */
+  body > footer > section:last-of-type > header ul { display: flex; gap: .55rem; margin-top: .2rem; }
+  body > footer > section:last-of-type > header ul a {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .07);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12);
+    font-family: var(--display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, .85);
+    transition: background .3s ease, color .3s ease, transform .4s var(--curva);
+  }
+  body > footer > section:last-of-type > header ul a:hover { background: var(--rojo); color: var(--blanco); transform: translateY(-3px); }
+  body > footer > section:last-of-type > header ul li:nth-of-type(1) a::before { content: ""; width: 16px; height: 16px; border: 2px solid currentColor; border-radius: 5px; background: radial-gradient(circle, transparent 3px, currentColor 3.5px, currentColor 5px, transparent 5.5px); }
+  body > footer > section:last-of-type > header ul li:nth-of-type(1) a::after { content: ""; position: absolute; left: 22px; top: 13px; width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
+  body > footer > section:last-of-type > header ul li:nth-of-type(2) a::before { content: "\266A"; font-family: var(--sans); font-size: 1.15rem; }
+  body > footer > section:last-of-type > header ul li:nth-of-type(3) a::before { content: ""; width: 20px; height: 14px; border-radius: 4px; background: currentColor; }
+  body > footer > section:last-of-type > header ul li:nth-of-type(3) a::after { content: ""; position: absolute; left: 17px; top: 15px; border: 4px solid transparent; border-left: 6px solid var(--noche); border-right: 0; }
+  body > footer > section:last-of-type > header ul li:nth-of-type(3) a:hover::after { border-left-color: var(--rojo); }
+  body > footer > section:last-of-type > header ul li:nth-of-type(4) a::before { content: "P"; font-style: italic; }
+  body > footer > section:last-of-type > header ul li:nth-of-type(5) a::before { content: "X"; font-family: var(--sans); font-size: .95rem; }
+  /* Columnas de enlaces con etiquetas */
+  body > footer > section:last-of-type > nav ul { display: grid; gap: .55rem; }
+  body > footer > section:last-of-type > nav li { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .55rem; }
+  body > footer > section:last-of-type > nav a { font-size: .92rem; color: rgba(255, 255, 255, .78); }
+  body > footer > section:last-of-type > nav a:hover { color: var(--blanco); }
+  body > footer > section:last-of-type > nav small { padding: .12rem .55rem; border-radius: 20px; background: rgba(255, 92, 111, .18); box-shadow: inset 0 0 0 1px rgba(255, 92, 111, .4); font-size: .7rem; font-weight: 700; color: #FFC2CA; }
+  /* Abajo: legales separados por barras y derechos */
+  body > footer > section:last-of-type > p {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: .8rem 2rem;
+    margin-top: 1.2rem;
+    padding: 1.5rem 0 1.8rem;
+    border-top: 1px solid rgba(255, 255, 255, .12);
+    font-size: .84rem;
+  }
+  body > footer > section:last-of-type > p a { font-weight: 600; color: rgba(255, 255, 255, .85); }
+  body > footer > section:last-of-type > p a:hover { color: var(--blanco); }
+  body > footer > section:last-of-type > p small { font-size: inherit; }
+
+  /* ============ 7. ANIMACIONES ============ */
+  @keyframes subir { from { opacity: 0; translate: 0 30px; } }
+  @keyframes aparecer { from { opacity: 0; } }
+  @keyframes panel { from { translate: 100% 0; } }
+  @keyframes salto { 40% { scale: 1.45; } }
+  @keyframes flotar { 50% { translate: 0 -12px; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+
+  /* ============ 8. CABECERA Y PIE EN EL MÓVIL ============ */
+  @media (max-width: 1000px) {
+    body > footer { --horizonte: 38%; }
+    body > footer > section:last-of-type { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    body > footer > section:last-of-type > header { grid-column: 1 / -1; }
+  }
+  @media (max-width: 640px) {
+    body > footer { --horizonte: 30%; }
+    body > footer > section:last-of-type { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    body > footer > section:last-of-type > p { flex-direction: column; }
+  }
+  @media (max-width: 680px) {
+    body > header { grid-template-columns: 1fr auto auto; gap: .5rem; }
+    body > header > button:nth-of-type(2) { display: block; }
+    body > header > button:first-of-type { padding-left: .8rem; font-size: 0; gap: .45rem; }
+    body > header > button:first-of-type b { font-size: .78rem; }
+    body > header nav {
+      position: absolute;
+      top: calc(100% + .4rem);
+      left: 1rem;
+      right: 1rem;
+      padding: .5rem;
+      border-radius: 24px;
+      background: var(--blanco);
+      box-shadow: var(--sombra);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity .3s ease, transform .4s var(--curva), visibility 0s .4s;
+    }
+    body > header[data-menu] nav { opacity: 1; visibility: visible; transform: none; transition: opacity .3s ease, transform .4s var(--curva); }
+    body > header nav ul { flex-direction: column; background: none; box-shadow: none; }
+    body > header nav a { padding: .95rem 1.1rem; font-size: 1.15rem; border-radius: 18px; }
+    body > aside { right: 1rem; bottom: 1rem; }
+  }
+
+  /* ============ 9. FICHA DEL PRODUCTO ============ */
+  main > section:first-of-type {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(340px, 1fr);
+    align-items: start;
+    gap: 1.4rem clamp(1.4rem, 3vw, 2.6rem);
+    max-width: calc(var(--ancho) + var(--margen) * 2);
+    margin: 0 auto;
+    padding: 6.2rem var(--margen) clamp(3.5rem, 7vw, 6rem);
+  }
+  /* Migas de pan */
+  main > section:first-of-type > nav { grid-column: 1 / -1; }
+  main > section:first-of-type > nav ol { display: flex; flex-wrap: wrap; gap: .4rem; font-size: .86rem; color: var(--suave); }
+  main > section:first-of-type > nav li:not(:last-of-type)::after { content: "/"; margin-left: .4rem; color: var(--gris-2); }
+  main > section:first-of-type > nav a { color: var(--suave); }
+  main > section:first-of-type > nav a:hover { color: var(--rojo); }
+  main > section:first-of-type > nav li:last-of-type { font-weight: 600; color: var(--tinta); }
+
+  /* --- Visor 360° --- */
+  main > section:first-of-type > section {
+    position: sticky;
+    top: 5.2rem;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    min-height: min(76svh, 760px);
+    border-radius: 34px;
+    background: radial-gradient(circle at 50% 44%, var(--blanco) 0%, var(--blanco) 30%, var(--hueso) 72%, var(--gris-2) 100%);
+    box-shadow: inset 0 0 0 1px rgba(17, 17, 20, .05);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  /* «360°» enorme de fondo */
+  main > section:first-of-type > section::before {
+    content: "360\00B0";
+    position: absolute;
+    left: 50%;
+    top: 44%;
+    z-index: -1;
+    font-family: var(--display);
+    font-size: clamp(8rem, 19vw, 17rem);
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -.05em;
+    color: rgba(17, 17, 20, .045);
+    translate: -50% -50%;
+  }
+  main > section:first-of-type > section > figure { position: relative; min-height: 420px; }
+  main > section:first-of-type > section > figure img {
+    position: absolute;
+    left: 50%;
+    top: 48%;
+    width: 72%;
+    translate: -50% -50%;
+    filter: drop-shadow(0 28px 24px rgba(17, 17, 20, .18));
+    transition: opacity .5s ease;
+  }
+  main > section:first-of-type > section > figure[data-estado="3d"] img { opacity: 0; }
+  main > section:first-of-type > section > figure canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: pan-y; }
+  main > section:first-of-type > section > figure canvas:active { cursor: grabbing; }
+  main > section:first-of-type > section > figure figcaption {
+    position: absolute;
+    left: 1.6rem;
+    top: 1.4rem;
+    display: grid;
+    font-size: .76rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--suave);
+    pointer-events: none;
+  }
+  main > section:first-of-type > section > figure figcaption strong { font-family: var(--display); font-size: 1.9rem; font-weight: 600; letter-spacing: -.01em; text-transform: none; color: var(--tinta); }
+  /* Etiqueta «Arrastra para girar» */
+  main > section:first-of-type > section > figure > p {
+    position: absolute;
+    right: 1.4rem;
+    top: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .5rem .9rem;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, .8);
+    box-shadow: inset 0 0 0 1px var(--linea);
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--texto);
+    pointer-events: none;
+  }
+  main > section:first-of-type > section > figure > p::before { content: "\21BB"; font-size: 1rem; color: var(--rojo); animation: girar-flecha 2.6s var(--curva) infinite; }
+  @keyframes girar-flecha { 60%, 100% { rotate: 360deg; } }
+
+  /* Barra de giro de 0 a 360° con marcas, y botones de vista */
+  main > section:first-of-type > section > footer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem 1.4rem;
+    margin: 0 1rem 1rem;
+    padding: .9rem 1rem .9rem 1.3rem;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, .86);
+    backdrop-filter: blur(14px);
+    box-shadow: var(--sombra-suave);
+  }
+  main > section:first-of-type > section > footer label {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) 3.4rem;
+    align-items: center;
+    gap: .9rem;
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--suave);
+  }
+  main > section:first-of-type > section > footer input[type="range"] {
+    width: 100%;
+    height: 28px;
+    background:
+      repeating-linear-gradient(90deg, rgba(17, 17, 20, .22) 0 1px, transparent 1px calc(100% / 36)) 0 50% / 100% 10px no-repeat,
+      repeating-linear-gradient(90deg, rgba(17, 17, 20, .45) 0 1.5px, transparent 1.5px calc(100% / 4)) 0 50% / 100% 18px no-repeat;
+    appearance: none;
+    cursor: ew-resize;
+  }
+  main > section:first-of-type > section > footer input[type="range"]::-webkit-slider-thumb {
+    width: 22px;
+    height: 22px;
+    border: 3px solid var(--blanco);
+    border-radius: 50%;
+    background: var(--rojo);
+    box-shadow: 0 4px 12px rgba(200, 16, 46, .4);
+    appearance: none;
+  }
+  main > section:first-of-type > section > footer input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border: 3px solid var(--blanco);
+    border-radius: 50%;
+    background: var(--rojo);
+    box-shadow: 0 4px 12px rgba(200, 16, 46, .4);
+  }
+  main > section:first-of-type > section > footer output { font-family: var(--display); font-size: 1.35rem; font-weight: 600; letter-spacing: 0; text-transform: none; text-align: right; color: var(--tinta); }
+  main > section:first-of-type > section > footer menu { display: flex; gap: .25rem; padding: .25rem; border-radius: 40px; background: var(--gris); }
+  main > section:first-of-type > section > footer menu button { padding: .5rem .95rem; border-radius: 40px; font-size: .84rem; font-weight: 600; color: var(--suave); transition: background .3s ease, color .3s ease; }
+  main > section:first-of-type > section > footer menu button:hover { color: var(--tinta); }
+  main > section:first-of-type > section > footer menu button[aria-pressed="true"] { background: var(--tinta); color: var(--blanco); }
+  /* «Girar sola»: interruptor aparte, con un punto que late mientras gira */
+  main > section:first-of-type > section > footer menu li:last-of-type { margin-left: .25rem; padding-left: .5rem; border-left: 1px solid var(--gris-2); }
+  main > section:first-of-type > section > footer menu li:last-of-type button { display: inline-flex; align-items: center; gap: .45rem; }
+  main > section:first-of-type > section > footer menu li:last-of-type button::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--suave); }
+  main > section:first-of-type > section > footer menu li:last-of-type button[aria-pressed="true"] { background: rgba(200, 16, 46, .1); color: var(--rojo-oscuro); }
+  main > section:first-of-type > section > footer menu li:last-of-type button[aria-pressed="true"]::before { background: var(--rojo); animation: latir 1.6s ease-in-out infinite; }
+  @keyframes latir { 50% { box-shadow: 0 0 0 5px rgba(200, 16, 46, .18); } }
+
+  /* --- Opciones de compra --- */
+  main > section:first-of-type > form { display: grid; gap: 1.5rem; padding-top: .4rem; }
+  main > section:first-of-type > form > header { display: grid; gap: .45rem; }
+  main > section:first-of-type > form > header p:first-of-type { font-size: .78rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--suave); }
+  main > section:first-of-type > form > header h1 { font-size: clamp(2.6rem, 4.4vw, 4.2rem); line-height: .98; }
+  main > section:first-of-type > form > header p:nth-of-type(2) { display: flex; align-items: baseline; flex-wrap: wrap; gap: .3rem .8rem; margin-top: .4rem; }
+  main > section:first-of-type > form > header data { font-family: var(--display); font-size: 2.4rem; font-weight: 600; letter-spacing: -.01em; color: var(--tinta); }
+  main > section:first-of-type > form > header del { color: var(--suave); }
+  main > section:first-of-type > form > header small { padding: .2rem .6rem; border-radius: 20px; background: rgba(200, 16, 46, .1); font-size: .8rem; font-weight: 700; color: var(--rojo-oscuro); }
+  main > section:first-of-type > form > header p:last-of-type { display: flex; align-items: center; gap: .5rem; font-size: .88rem; color: var(--suave); }
+  main > section:first-of-type > form > header p:last-of-type::before { content: "\2605\2605\2605\2605\2605"; letter-spacing: .12em; color: #B07A00; }
+  main > section:first-of-type > form > p:first-of-type { font-size: 1.05rem; color: var(--texto); }
+
+  main > section:first-of-type fieldset { display: flex; flex-wrap: wrap; gap: .55rem; border: 0; }
+  main > section:first-of-type legend {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: .8rem;
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--suave);
+  }
+  main > section:first-of-type legend output { font-size: .9rem; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--tinta); }
+  main > section:first-of-type fieldset input[type="radio"] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  main > section:first-of-type fieldset label { position: relative; cursor: pointer; }
+  main > section:first-of-type fieldset label:has(input:focus-visible) { outline: 2px solid var(--rojo); outline-offset: 3px; }
+
+  /* Color: bolas del color con su nombre debajo */
+  main > section:first-of-type fieldset:first-of-type { gap: .4rem .9rem; }
+  main > section:first-of-type fieldset:first-of-type label span {
+    display: grid;
+    justify-items: center;
+    gap: .4rem;
+    min-width: 54px;
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--suave);
+    transition: color .3s ease;
+  }
+  main > section:first-of-type fieldset:first-of-type label span::before {
+    content: "";
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 34% 28%, rgba(255, 255, 255, .38), transparent 48%), var(--muestra);
+    box-shadow: 0 0 0 3px var(--blanco), 0 0 0 4px var(--linea);
+    transition: box-shadow .3s ease, transform .4s var(--curva);
+  }
+  main > section:first-of-type fieldset:first-of-type label:has(input[value="salvia"]) { --muestra: #9C9782; }
+  main > section:first-of-type fieldset:first-of-type label:has(input[value="cafe"]) { --muestra: #35281F; }
+  main > section:first-of-type fieldset:first-of-type label:has(input[value="marino"]) { --muestra: #1F2B42; }
+  main > section:first-of-type fieldset:first-of-type label:has(input[value="negro"]) { --muestra: #1E1F22; }
+  main > section:first-of-type fieldset:first-of-type label:has(input[value="rojo"]) { --muestra: #A3172F; }
+  main > section:first-of-type fieldset:first-of-type label:hover span::before { transform: translateY(-3px); }
+  main > section:first-of-type fieldset:first-of-type label:has(input:checked) span { color: var(--tinta); }
+  main > section:first-of-type fieldset:first-of-type label:has(input:checked) span::before { box-shadow: 0 0 0 3px var(--blanco), 0 0 0 5px var(--tinta); }
+
+  /* Talla: pastillas; las agotadas, tachadas; las de pocas unidades, con punto rojo */
+  main > section:first-of-type fieldset:nth-of-type(2) label span {
+    display: grid;
+    place-items: center;
+    min-width: 58px;
+    height: 50px;
+    padding: 0 .8rem;
+    border-radius: 16px;
+    background: var(--hueso);
+    box-shadow: inset 0 0 0 1.5px transparent;
+    font-weight: 700;
+    color: var(--tinta);
+    transition: background .25s ease, color .25s ease, box-shadow .25s ease;
+  }
+  main > section:first-of-type fieldset:nth-of-type(2) label:hover span { box-shadow: inset 0 0 0 1.5px var(--tinta); }
+  main > section:first-of-type fieldset:nth-of-type(2) label:has(input:checked) span { background: var(--tinta); color: var(--blanco); }
+  main > section:first-of-type fieldset:nth-of-type(2) label[data-pocas]::after {
+    content: "";
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--rojo);
+    box-shadow: 0 0 0 3px rgba(200, 16, 46, .15);
+  }
+  main > section:first-of-type fieldset:nth-of-type(2) label:has(input:disabled) { cursor: not-allowed; }
+  main > section:first-of-type fieldset:nth-of-type(2) label:has(input:disabled) span {
+    background: linear-gradient(to top right, transparent calc(50% - 1px), rgba(17, 17, 20, .25) 50%, transparent calc(50% + 1px)), var(--gris);
+    color: #8A8A93;
+  }
+  main > section:first-of-type fieldset:nth-of-type(2)[aria-invalid="true"] label span { box-shadow: inset 0 0 0 1.5px var(--rojo); }
+  /* Existencias de la talla elegida */
+  main > section:first-of-type form > p:nth-of-type(2) {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin-top: -.6rem;
+    font-size: .92rem;
+    font-weight: 600;
+    color: var(--tinta);
+  }
+  main > section:first-of-type form > p:nth-of-type(2)::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: #1E9E57; box-shadow: 0 0 0 4px rgba(30, 158, 87, .16); }
+  main > section:first-of-type form > p:nth-of-type(2)[data-nivel="pocas"]::before { background: #E08A00; box-shadow: 0 0 0 4px rgba(224, 138, 0, .18); }
+  main > section:first-of-type form > p:nth-of-type(2)[data-nivel="agotada"]::before,
+  main > section:first-of-type form > p:nth-of-type(2)[data-nivel="ninguna"]::before { background: #9A9AA2; box-shadow: none; }
+
+  /* Cantidad */
+  main > section:first-of-type fieldset:nth-of-type(3) { align-items: center; }
+  main > section:first-of-type fieldset:nth-of-type(3) button,
+  main > section:first-of-type fieldset:nth-of-type(3) input {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    text-align: center;
+    font-weight: 700;
+    color: var(--tinta);
+  }
+  main > section:first-of-type fieldset:nth-of-type(3) button { box-shadow: inset 0 0 0 1px var(--linea); font-size: 1.2rem; transition: background .25s ease, color .25s ease; }
+  main > section:first-of-type fieldset:nth-of-type(3) button:hover { background: var(--tinta); color: var(--blanco); }
+  main > section:first-of-type fieldset:nth-of-type(3) input { border: 0; background: var(--hueso); -moz-appearance: textfield; }
+  main > section:first-of-type fieldset:nth-of-type(3) input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  /* Botones: añadir y comprar ya */
+  main > section:first-of-type form > p:nth-of-type(3) { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: .6rem; }
+  main > section:first-of-type form > p:nth-of-type(3) button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .7rem;
+    padding: 1.1rem 1.2rem;
+    border-radius: 40px;
+    font-weight: 700;
+    transition: background .3s ease, color .3s ease, transform .4s var(--curva);
+  }
+  main > section:first-of-type form > p:nth-of-type(3) button:first-of-type { background: var(--tinta); color: var(--blanco); }
+  main > section:first-of-type form > p:nth-of-type(3) button:first-of-type output { padding: .3rem .75rem; border-radius: 30px; background: rgba(255, 255, 255, .16); font-weight: 700; }
+  main > section:first-of-type form > p:nth-of-type(3) button:last-of-type { box-shadow: inset 0 0 0 1.5px var(--tinta); color: var(--tinta); }
+  main > section:first-of-type form > p:nth-of-type(3) button:hover { transform: translateY(-2px); }
+  main > section:first-of-type form > p:nth-of-type(3) button:first-of-type:hover { background: var(--rojo); }
+  main > section:first-of-type form > p:nth-of-type(3) button:last-of-type:hover { background: var(--tinta); color: var(--blanco); }
+  main > section:first-of-type form > output { min-height: 1.4em; margin-top: -.8rem; font-size: .9rem; font-weight: 600; color: var(--rojo-oscuro); }
+  main > section:first-of-type form > output[data-tipo="ok"] { color: #13773A; }
+
+  main > section:first-of-type form > ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+  main > section:first-of-type form > ul li { padding: .8rem .75rem; border-radius: 16px; background: var(--hueso); font-size: .8rem; line-height: 1.35; }
+  main > section:first-of-type form > ul li strong { display: block; font-size: .88rem; color: var(--tinta); }
+  main > section:first-of-type details { border-top: 1px solid var(--linea); }
+  main > section:first-of-type details:last-of-type { margin-top: -1.5rem; border-bottom: 1px solid var(--linea); }
+  main > section:first-of-type details + details { margin-top: -1.5rem; }
+  main > section:first-of-type summary { display: flex; justify-content: space-between; padding: 1rem 0; font-weight: 700; color: var(--tinta); cursor: pointer; list-style: none; }
+  main > section:first-of-type summary::-webkit-details-marker { display: none; }
+  main > section:first-of-type summary::after { content: "+"; font-size: 1.2rem; line-height: 1; transition: rotate .3s ease; }
+  main > section:first-of-type details[open] summary::after { rotate: 45deg; }
+  main > section:first-of-type details p { padding-bottom: 1rem; font-size: .94rem; color: var(--suave); }
+
+  /* ============ 10. EXISTENCIAS POR COLOR Y TALLA ============ */
+  main > section:nth-of-type(2) {
+    display: grid;
+    grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+    align-items: start;
+    gap: 2rem clamp(2rem, 6vw, 5rem);
+    padding: clamp(4rem, 8vw, 6.5rem) max(var(--margen), calc((100% - var(--ancho)) / 2));
+    background:
+      linear-gradient(90deg, rgba(18, 3, 4, .9) 30%, rgba(18, 3, 4, .78)),
+      url("img/fondos/poligonos-finos.svg") center / cover,
+      var(--noche);
+    color: rgba(255, 255, 255, .78);
+  }
+  main > section:nth-of-type(2) > header > p:first-of-type { color: rgba(255, 255, 255, .78); }
+  main > section:nth-of-type(2) > header > p:first-of-type::before { background: #FF5C6F; box-shadow: 0 0 0 4px rgba(255, 92, 111, .2); }
+  main > section:nth-of-type(2) h2 { margin-top: .8rem; color: var(--blanco); }
+  main > section:nth-of-type(2) h2 em { color: #FF8A9A; }
+  main > section:nth-of-type(2) > header > p:last-of-type { max-width: 380px; margin-top: 1rem; }
+  main > section:nth-of-type(2) > header dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.4rem 1rem; margin-top: 2.2rem; }
+  main > section:nth-of-type(2) > header dt { font-size: .74rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .6); }
+  main > section:nth-of-type(2) > header dd { font-family: var(--display); font-size: 1.2rem; font-weight: 600; line-height: 1.2; color: var(--blanco); }
+  main > section:nth-of-type(2) table { width: 100%; border-collapse: separate; border-spacing: 0 .45rem; font-size: .92rem; }
+  main > section:nth-of-type(2) caption { padding-bottom: .6rem; font-size: .78rem; font-weight: 700; letter-spacing: .14em; text-align: left; text-transform: uppercase; color: rgba(255, 255, 255, .6); }
+  main > section:nth-of-type(2) th,
+  main > section:nth-of-type(2) td { padding: .85rem .5rem; text-align: center; }
+  main > section:nth-of-type(2) thead th { padding-block: .3rem; font-weight: 700; color: var(--blanco); }
+  main > section:nth-of-type(2) thead th:first-of-type { padding-left: 1rem; text-align: left; }
+  main > section:nth-of-type(2) tbody tr { background: rgba(18, 3, 4, .55); backdrop-filter: blur(6px); transition: background .3s ease; }
+  main > section:nth-of-type(2) tbody tr[aria-current] { background: rgba(200, 16, 46, .55); }
+  main > section:nth-of-type(2) tbody th { padding-left: 1rem; border-radius: 14px 0 0 14px; text-align: left; white-space: nowrap; font-weight: 700; color: var(--blanco); }
+  main > section:nth-of-type(2) tbody th::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: .6rem; vertical-align: -1px; border-radius: 50%; background: var(--muestra); box-shadow: 0 0 0 2px rgba(255, 255, 255, .2); }
+  main > section:nth-of-type(2) tbody tr[data-color="salvia"] { --muestra: #9C9782; }
+  main > section:nth-of-type(2) tbody tr[data-color="cafe"] { --muestra: #6A5040; }
+  main > section:nth-of-type(2) tbody tr[data-color="marino"] { --muestra: #3B5280; }
+  main > section:nth-of-type(2) tbody tr[data-color="negro"] { --muestra: #3A3B40; }
+  main > section:nth-of-type(2) tbody tr[data-color="rojo"] { --muestra: #A3172F; }
+  main > section:nth-of-type(2) tbody td:last-of-type { border-radius: 0 14px 14px 0; }
+  main > section:nth-of-type(2) td { font-variant-numeric: tabular-nums; color: var(--blanco); }
+  main > section:nth-of-type(2) td[data-nivel="pocas"] { color: #FFB86B; }
+  main > section:nth-of-type(2) td[data-nivel="agotada"] { color: rgba(255, 255, 255, .62); }
+  main > section:nth-of-type(2) table + p { margin-top: .6rem; font-size: .84rem; color: rgba(255, 255, 255, .68); }
+
+  /* ============ 11. TAMBIÉN TE PUEDE GUSTAR ============ */
+  main > section:nth-of-type(3) {
+    max-width: calc(var(--ancho) + var(--margen) * 2);
+    margin: 0 auto;
+    padding: clamp(4rem, 8vw, 6.5rem) var(--margen);
+  }
+  main > section:nth-of-type(3) > header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 1rem; margin-bottom: 2.4rem; }
+  main > section:nth-of-type(3) > header > p:first-of-type { flex-basis: 100%; }
+  main > section:nth-of-type(3) > header > a { font-weight: 700; }
+  main > section:nth-of-type(3) > header > a::after { content: " \2192"; }
+
+  /* ============ 12. FICHA EN TABLETA Y MÓVIL ============ */
+  @media (max-width: 1000px) {
+    main > section:first-of-type { grid-template-columns: minmax(0, 1fr); padding-top: 5.4rem; }
+    main > section:first-of-type > section { position: relative; top: 0; min-height: 0; }
+    main > section:nth-of-type(2) { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 640px) {
+    main > section:first-of-type > section { border-radius: 26px; }
+    main > section:first-of-type > section > figure { min-height: 340px; }
+    main > section:first-of-type > section > figure figcaption { left: 1.1rem; top: 1rem; }
+    main > section:first-of-type > section > figure figcaption strong { font-size: 1.45rem; }
+    main > section:first-of-type > section > figure > p { right: 1rem; top: auto; bottom: .8rem; }
+    main > section:first-of-type > section > footer { grid-template-columns: minmax(0, 1fr); margin: 0 .6rem .6rem; }
+    main > section:first-of-type > section > footer label { grid-template-columns: auto minmax(0, 1fr) 3rem; }
+    main > section:first-of-type > section > footer menu { justify-content: center; }
+    main > section:first-of-type form > ul { grid-template-columns: minmax(0, 1fr); }
+    main > section:first-of-type form > p:nth-of-type(3) { grid-template-columns: minmax(0, 1fr); }
+    main > section:nth-of-type(2) table { font-size: .8rem; }
+    main > section:nth-of-type(2) th, main > section:nth-of-type(2) td { padding: .7rem .2rem; }
+    main > section:nth-of-type(2) tbody th { padding-left: .6rem; }
+  }
+
+  /* ============ TARJETAS DE PRODUCTO ============ */
+  main > section:nth-of-type(3) > ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1.4rem, 3vw, 2.4rem) clamp(1rem, 2vw, 1.6rem); }
+  main > section:nth-of-type(3) > ul > li > article { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: .15rem 1rem; }
+  /* Foto: frente y, al pasar, la espalda */
+  main > section:nth-of-type(3) > ul article figure {
+    grid-column: 1 / -1;
+    aspect-ratio: 4 / 4.4;
+    margin-bottom: 1rem;
+    border-radius: 26px;
+    background: radial-gradient(circle at 50% 42%, var(--blanco), var(--hueso) 70%);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  main > section:nth-of-type(3) > ul article figure img {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    object-fit: contain;
+    padding: 9% 7%;
+    filter: drop-shadow(0 22px 18px rgba(17, 17, 20, .16));
+    transition: opacity .6s ease, scale .9s var(--curva), rotate .9s var(--curva);
+  }
+  main > section:nth-of-type(3) > ul article figure img:last-of-type { opacity: 0; scale: .94; rotate: 4deg; }
+  main > section:nth-of-type(3) > ul article:hover figure img:first-of-type { opacity: 0; scale: .94; rotate: -4deg; }
+  main > section:nth-of-type(3) > ul article:hover figure img:last-of-type { opacity: 1; scale: 1.02; rotate: 0deg; }
+  main > section:nth-of-type(3) > ul article:hover figure { box-shadow: var(--sombra-suave); translate: 0 -6px; }
+  main > section:nth-of-type(3) > ul article figure { transition: translate .6s var(--curva), box-shadow .6s ease; }
+  /* Píldora «360°» arriba a la derecha */
+  main > section:nth-of-type(3) > ul article figure::before {
+    content: "360\00B0";
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    z-index: 1;
+    padding: .3rem .7rem;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, .9);
+    box-shadow: inset 0 0 0 1px var(--linea);
+    font-family: var(--display);
+    font-size: .9rem;
+    font-style: italic;
+    font-weight: 600;
+    color: var(--tinta);
+  }
+  /* Etiqueta: «Más vendida», «Nueva», «-20 %» */
+  main > section:nth-of-type(3) > ul article figcaption {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    z-index: 1;
+    padding: .35rem .75rem;
+    border-radius: 20px;
+    background: var(--tinta);
+    font-size: .74rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--blanco);
+  }
+  /* «Ver la chaqueta» aparece al pasar */
+  main > section:nth-of-type(3) > ul article figure::after {
+    content: "Ver la chaqueta \2192";
+    position: absolute;
+    left: 50%;
+    bottom: 1rem;
+    z-index: 1;
+    padding: .7rem 1.2rem;
+    border-radius: 30px;
+    background: var(--blanco);
+    box-shadow: var(--sombra-suave);
+    font-size: .85rem;
+    font-weight: 700;
+    white-space: nowrap;
+    color: var(--tinta);
+    opacity: 0;
+    translate: -50% 12px;
+    transition: opacity .4s ease, translate .5s var(--curva);
+  }
+  main > section:nth-of-type(3) > ul article:hover figure::after,
+  main > section:nth-of-type(3) > ul article:focus-within figure::after { opacity: 1; translate: -50% 0; }
+  main > section:nth-of-type(3) > ul article > p:first-of-type { grid-column: 1 / -1; font-size: .74rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--suave); }
+  main > section:nth-of-type(3) > ul article h3 { font-size: clamp(1.5rem, 2.2vw, 1.95rem); }
+  main > section:nth-of-type(3) > ul article h3 a::after { content: ""; position: absolute; inset: 0; z-index: 2; }
+  main > section:nth-of-type(3) > ul article > p:nth-of-type(2) { display: flex; align-items: baseline; gap: .5rem; }
+  main > section:nth-of-type(3) > ul article data { font-family: var(--display); font-size: 1.5rem; font-weight: 600; color: var(--tinta); }
+  main > section:nth-of-type(3) > ul article del { font-size: .9rem; color: var(--suave); }
+  /* Colores disponibles: puntos */
+  main > section:nth-of-type(3) > ul article ul { grid-column: 1 / -1; display: flex; gap: .4rem; margin-top: .55rem; }
+  main > section:nth-of-type(3) > ul article ul li { width: 16px; height: 16px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(17, 17, 20, .15); font-size: 0; }
+  main > section:nth-of-type(3) > ul article ul li[data-color="salvia"] { background: #9C9782; }
+  main > section:nth-of-type(3) > ul article ul li[data-color="cafe"] { background: #35281F; }
+  main > section:nth-of-type(3) > ul article ul li[data-color="marino"] { background: #1F2B42; }
+  main > section:nth-of-type(3) > ul article ul li[data-color="negro"] { background: #1E1F22; }
+  main > section:nth-of-type(3) > ul article ul li[data-color="rojo"] { background: #A3172F; }
+
+  /* Sexta tarjeta: la colección en 3D, en oscuro y con una sola foto */
+  main > section:nth-of-type(3) > ul > li:nth-of-type(6) article figure { background: radial-gradient(circle at 50% 38%, #4A0B16, var(--noche) 74%); }
+  main > section:nth-of-type(3) > ul > li:nth-of-type(6) article figure img,
+  main > section:nth-of-type(3) > ul > li:nth-of-type(6) article:hover figure img { opacity: 1; rotate: 0deg; scale: 1; padding: 5% 3%; filter: drop-shadow(0 26px 22px rgba(0, 0, 0, .45)); }
+  main > section:nth-of-type(3) > ul > li:nth-of-type(6) article:hover figure img { scale: 1.05; }
+  main > section:nth-of-type(3) > ul > li:nth-of-type(6) article figure::before { content: "3D"; }
+  main > section:nth-of-type(3) > ul > li:nth-of-type(6) article figure::after { content: "Verla en 3D \2192"; }
+  main > section:nth-of-type(3) > ul > li:nth-of-type(6) article figcaption { background: var(--rojo); }
+
+  @media (max-width: 1000px) {
+    main > section:nth-of-type(3) > ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 560px) {
+    main > section:nth-of-type(3) > ul { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html"><b aria-hidden="true">ch</b>Chaket</a>
+  <nav aria-label="Principal" id="menu">
+    <ul>
+      <li><a href="index.html#inicio">Inicio</a></li>
+      <li><a href="index.html#coleccion">Colección</a></li>
+      <li><a href="coleccion-3d.html">En 3D</a></li>
+      <li><a href="index.html#configurador">Configura</a></li>
+      <li><a href="#club">Club</a></li>
+    </ul>
+  </nav>
+  <button type="button" aria-haspopup="dialog" aria-label="Cesta: 0 productos">Cesta <b>0</b></button>
+  <button type="button" aria-label="Abrir el menú" aria-controls="menu" aria-expanded="false"></button>
+</header>
+
+<main>
+
+  <!-- 1. LA CHAQUETA: visor 360° a la izquierda y opciones de compra a la derecha -->
+  <section aria-labelledby="titulo-producto">
+    <nav aria-label="Migas de pan">
+      <ol>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="index.html#coleccion">Colección</a></li>
+        <li aria-current="page">Chaket Plumón ligero</li>
+      </ol>
+    </nav>
+
+    <section aria-label="La chaqueta en 360°">
+      <figure>
+        <img src="img/chaquetas/rojo.webp" alt="Chaket Plumón ligero en rojo, vista de frente" width="1000" height="1000" fetchpriority="high">
+        <canvas role="img" aria-label="Chaket Plumón ligero en 3D: arrastra para girarla"></canvas>
+        <figcaption><strong>Rojo</strong>Vista 360°</figcaption>
+        <p>Arrastra para girar</p>
+      </figure>
+      <footer>
+        <label>Giro <input type="range" min="0" max="359" step="1" value="0"><output>0°</output></label>
+        <menu aria-label="Vista de la chaqueta">
+          <li><button type="button" aria-pressed="true">Frente</button></li>
+          <li><button type="button" aria-pressed="false">Espalda</button></li>
+          <li><button type="button" aria-pressed="true">Girar sola</button></li>
+        </menu>
+      </footer>
+    </section>
+
+    <form novalidate aria-labelledby="titulo-producto">
+      <header>
+        <p>Chaket · Ciudad y viaje</p>
+        <h1 id="titulo-producto">Plumón ligero</h1>
+        <p><data value="89">89 €</data><del>119 €</del><small>-25 %</small></p>
+        <p>4,8 · 312 opiniones</p>
+      </header>
+      <p>Nuestra chaqueta de plumón ligero: cuello alto de 7 cm, manga raglán sin costura en el hombro, nueve canales horizontales y dos bolsillos de cremallera oculta. Abriga mucho y pesa poco.</p>
+
+      <fieldset>
+        <legend>Color <output>Rojo</output></legend>
+        <label><input type="radio" name="color" value="salvia"><span>Verde salvia</span></label>
+        <label><input type="radio" name="color" value="cafe"><span>Café</span></label>
+        <label><input type="radio" name="color" value="marino"><span>Azul marino</span></label>
+        <label><input type="radio" name="color" value="negro"><span>Negro</span></label>
+        <label><input type="radio" name="color" value="rojo" checked><span>Rojo</span></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Talla <output>Elige una</output></legend>
+        <label><input type="radio" name="talla" value="XS" disabled><span>XS</span></label>
+        <label><input type="radio" name="talla" value="S"><span>S</span></label>
+        <label><input type="radio" name="talla" value="M"><span>M</span></label>
+        <label><input type="radio" name="talla" value="L"><span>L</span></label>
+        <label data-pocas><input type="radio" name="talla" value="XL"><span>XL</span></label>
+        <label><input type="radio" name="talla" value="XXL"><span>XXL</span></label>
+      </fieldset>
+      <p role="status" data-nivel="ninguna">Elige tu talla para ver cuántas quedan</p>
+
+      <fieldset>
+        <legend>Cantidad</legend>
+        <button type="button" aria-label="Una menos">−</button>
+        <input type="number" name="cantidad" value="1" min="1" max="9" aria-label="Cantidad">
+        <button type="button" aria-label="Una más">+</button>
+      </fieldset>
+
+      <p><button type="submit">Añadir a la cesta <output>89 €</output></button><button type="button">Comprar ahora</button></p>
+      <output aria-live="polite"></output>
+
+      <ul aria-label="Ventajas">
+        <li><strong>Envío gratis</strong>desde 100 €</li>
+        <li><strong>30 días</strong>para devolverla</li>
+        <li><strong>Impermeable</strong>y lavable</li>
+      </ul>
+      <details>
+        <summary>Materiales y cuidado</summary>
+        <p>Exterior de nailon reciclado con acabado repelente al agua. Relleno: plumón ligero · 90 g/m². Lavado a 30 °C con el cierre subido.</p>
+      </details>
+      <details>
+        <summary>Guía de tallas</summary>
+        <p>Corte unisex. Si estás entre dos tallas, elige la mayor para llevar un jersey grueso debajo. La M mide 68 cm de largo y 112 cm de pecho.</p>
+      </details>
+      <details>
+        <summary>Envío y devoluciones</summary>
+        <p>Envío en 48–72 horas a península, gratis a partir de 100 €. Exprés en 24 h por 9,95 €. Cambios y devoluciones gratis durante 30 días.</p>
+      </details>
+    </form>
+  </section>
+
+  <!-- 2. EXISTENCIAS: qué queda de cada color y talla -->
+  <section aria-labelledby="titulo-existencias">
+    <header>
+      <p>Existencias</p>
+      <h2 id="titulo-existencias">Lo que queda <em>en la tienda</em></h2>
+      <p>Las unidades que nos quedan de cada color y talla, al momento. Si tu talla está agotada, el Club te avisa cuando vuelva.</p>
+      <dl>
+        <dt>Relleno</dt><dd>Plumón ligero · 90 g/m²</dd>
+        <dt>Peso</dt><dd>420 g</dd>
+        <dt>Pensada para</dt><dd>Ciudad y viaje</dd>
+        <dt>Tallas</dt><dd>De la XS a la XXL</dd>
+      </dl>
+    </header>
+    <section aria-label="Tabla de existencias">
+      <table>
+        <caption>Unidades por color y talla</caption>
+        <thead>
+          <tr><th scope="col">Color</th><th scope="col">XS</th><th scope="col">S</th><th scope="col">M</th><th scope="col">L</th><th scope="col">XL</th><th scope="col">XXL</th></tr>
+        </thead>
+        <tbody>
+          <tr data-color="salvia"><th scope="row">Verde salvia</th><td data-nivel="pocas">3</td><td data-nivel="pocas">3</td><td>12</td><td>20</td><td data-nivel="agotada">—</td><td data-nivel="pocas">2</td></tr>
+          <tr data-color="cafe"><th scope="row">Café</th><td>12</td><td data-nivel="agotada">—</td><td>20</td><td data-nivel="pocas">2</td><td>12</td><td data-nivel="pocas">3</td></tr>
+          <tr data-color="marino"><th scope="row">Azul marino</th><td>12</td><td data-nivel="pocas">3</td><td>4</td><td data-nivel="pocas">3</td><td data-nivel="pocas">2</td><td data-nivel="pocas">2</td></tr>
+          <tr data-color="negro"><th scope="row">Negro</th><td data-nivel="pocas">3</td><td>12</td><td>12</td><td>8</td><td data-nivel="pocas">3</td><td data-nivel="agotada">—</td></tr>
+          <tr data-color="rojo" aria-current="true"><th scope="row">Rojo</th><td data-nivel="agotada">—</td><td>5</td><td>20</td><td>20</td><td data-nivel="pocas">1</td><td>20</td></tr>
+        </tbody>
+      </table>
+      <p>En naranja, tallas con tres unidades o menos. «—», agotada.</p>
+    </section>
+  </section>
+
+  <!-- 3. TAMBIÉN TE PUEDE GUSTAR -->
+  <section aria-labelledby="titulo-relacionadas">
+    <header>
+      <p>Sigue mirando</p>
+      <h2 id="titulo-relacionadas">También te puede <em>gustar</em></h2>
+      <a href="index.html#coleccion">Ver toda la colección</a>
+    </header>
+    <ul aria-label="Otras chaquetas">
+    <li>
+      <article aria-labelledby="t-nordwind-alpine">
+        <figure>
+          <img src="img/chaquetas/negro.webp" alt="Nordwind Alpine en negro, de frente" width="1000" height="1000" loading="lazy">
+          <img src="img/chaquetas/negro-espalda.webp" alt="" width="1000" height="1000" loading="lazy">
+          <figcaption>Montaña</figcaption>
+        </figure>
+        <p>Nordwind · Montaña y nieve</p>
+        <h3 id="t-nordwind-alpine"><a href="producto.html?p=nordwind-alpine">Alpine</a></h3>
+        <p><data value="129">129 €</data></p>
+        <ul aria-label="3 colores"><li data-color="negro">Negro</li><li data-color="marino">Azul marino</li><li data-color="cafe">Café</li></ul>
+      </article>
+    </li>
+    <li>
+      <article aria-labelledby="t-kumo-city">
+        <figure>
+          <img src="img/chaquetas/cafe.webp" alt="Kumo City en café, de frente" width="1000" height="1000" loading="lazy">
+          <img src="img/chaquetas/cafe-espalda.webp" alt="" width="1000" height="1000" loading="lazy">
+        </figure>
+        <p>Kumo · Ciudad</p>
+        <h3 id="t-kumo-city"><a href="producto.html?p=kumo-city">City</a></h3>
+        <p><data value="109">109 €</data></p>
+        <ul aria-label="3 colores"><li data-color="cafe">Café</li><li data-color="salvia">Verde salvia</li><li data-color="negro">Negro</li></ul>
+      </article>
+    </li>
+    <li>
+      <article aria-labelledby="t-polar-trail">
+        <figure>
+          <img src="img/chaquetas/salvia.webp" alt="Polar Club Trail en verde salvia, de frente" width="1000" height="1000" loading="lazy">
+          <img src="img/chaquetas/salvia-espalda.webp" alt="" width="1000" height="1000" loading="lazy">
+          <figcaption>Nueva</figcaption>
+        </figure>
+        <p>Polar Club · Senderismo y viaje</p>
+        <h3 id="t-polar-trail"><a href="producto.html?p=polar-trail">Trail</a></h3>
+        <p><data value="119">119 €</data></p>
+        <ul aria-label="3 colores"><li data-color="salvia">Verde salvia</li><li data-color="negro">Negro</li><li data-color="marino">Azul marino</li></ul>
+      </article>
+    </li>
+    </ul>
+  </section>
+
+</main>
+
+<footer id="club">
+  <section aria-labelledby="titulo-club">
+    <h2 id="titulo-club">Ligera para llevar.<br>Cálida para <em>todo el invierno.</em></h2>
+    <p>Únete al Club Chaket: un 10 % en tu primera chaqueta, los colores nuevos antes que nadie y un aviso cuando vuelva tu talla.</p>
+    <form aria-label="Suscripción al Club Chaket" novalidate>
+      <input type="email" name="correo" placeholder="Tu correo electrónico" aria-label="Correo electrónico" autocomplete="email" required>
+      <button type="submit">Unirme al Club</button>
+    </form>
+    <output aria-live="polite"></output>
+  </section>
+  <section aria-label="Más de Chaket">
+    <header>
+      <a href="index.html"><b aria-hidden="true">ch</b>Chaket</a>
+      <p>Abrigo sin límites</p>
+      <ul aria-label="Redes sociales">
+        <li><a href="#" aria-label="Instagram"></a></li>
+        <li><a href="#" aria-label="TikTok"></a></li>
+        <li><a href="#" aria-label="YouTube"></a></li>
+        <li><a href="#" aria-label="Pinterest"></a></li>
+        <li><a href="#" aria-label="X"></a></li>
+      </ul>
+    </header>
+    <nav aria-label="Tienda">
+      <ul>
+        <li><a href="index.html#coleccion">Colección</a></li>
+        <li><a href="index.html#configurador">Configura la tuya</a></li>
+        <li><a href="coleccion-3d.html">Colección en 3D</a><small>Nuevo</small></li>
+        <li><a href="producto.html">Ficha en 360°</a></li>
+        <li><a href="index.html#oferta">Oferta de la semana</a><small>-20 %</small></li>
+        <li><a href="pago.html">Pago seguro</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Ayuda">
+      <ul>
+        <li><a href="#">Envíos y entregas</a></li>
+        <li><a href="#">Cambios y devoluciones</a></li>
+        <li><a href="#">Guía de tallas</a></li>
+        <li><a href="#">Cuidado de la chaqueta</a></li>
+        <li><a href="#">Contacto</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="La marca">
+      <ul>
+        <li><a href="#">Nuestra historia</a></li>
+        <li><a href="#">Trabaja con nosotros</a><small>Contratamos</small></li>
+        <li><a href="#">Tienda de Gran Vía 26</a></li>
+        <li><a href="#club">Club Chaket</a><small>-10 %</small></li>
+        <li><a href="#">Colores nuevos</a><small>Noviembre 2026</small></li>
+      </ul>
+    </nav>
+    <p><small><a href="#">Aviso legal</a> | <a href="#">Privacidad</a> | <a href="#">Cookies</a> | <a href="#">Condiciones de compra</a></small><small>© 2026 Chaket | Todos los derechos reservados · Plantilla premium de All Pixels</small></p>
+  </section>
+</footer>
+
+<dialog aria-labelledby="titulo-cesta">
+  <header>
+    <h2 id="titulo-cesta">Tu cesta</h2>
+    <button type="button" aria-label="Cerrar la cesta">&#x2715;</button>
+  </header>
+  <p>Envío gratis a partir de 100 €</p>
+  <progress max="100" value="0" aria-label="Camino al envío gratis"></progress>
+  <ul aria-label="Productos en la cesta"></ul>
+  <footer>
+    <dl>
+      <dt>Subtotal</dt><dd>0 €</dd>
+      <dt>Envío</dt><dd>—</dd>
+    </dl>
+    <a href="pago.html">Finalizar compra</a>
+    <button type="button">Seguir comprando</button>
+  </footer>
+</dialog>
+
+<aside aria-live="polite" aria-label="Aviso de la cesta">
+  <figure><img src="img/chaquetas/rojo.webp" alt="" width="1000" height="1000"></figure>
+  <p><strong>Añadida a la cesta</strong><small>Chaket Plumón ligero</small></p>
+  <button type="button">Ver cesta</button>
+</aside>
+
+<script src="js/three.min.js"></script>
+<script src="js/GLTFLoader.js"></script>
+<script src="js/RoomEnvironment.js"></script>
+<script src="js/meshopt-decoder.js"></script>
+<script src="js/catalogo.js"></script>
+<script src="js/chaket-3d.js"></script>
+<script src="js/tienda.js"></script>
+<script src="js/modelo.js"></script>
+<script src="js/visor.js"></script>
+<script src="js/producto.js"></script>
+</body>
+</html>

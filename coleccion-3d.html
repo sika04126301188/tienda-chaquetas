@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+  Chaket · plantilla premium de All Pixels (allpixels.dev)
+  Colección en 3D: visor del modelo en cinco colores con vistas guiadas, talla y cesta, fotos de estudio, detalles, medidas y descargas GLB.
+  HTML semántico sin clases ni divs; todo el CSS va en <style>.
+-->
+<title>Plumón ligero en 3D — Chaket</title>
+<meta name="description" content="La chaqueta de plumón ligero de Chaket en 3D: gírala, cambia entre cinco colores, mira los detalles de cerca, consulta las medidas y añádela a la cesta.">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" type="image/png" href="img/icono.png">
+<style>
+  /* ============ 1. PALETA ============ */
+  :root {
+    --blanco: #FFFFFF;
+    --tinta: #111114;        /* negro de la marca */
+    --texto: #3B3B42;
+    --suave: #63636C;
+    --hueso: #F6F5F2;        /* blanco roto para fondos */
+    --gris: #F2F2F4;
+    --gris-2: #E5E5E9;
+    --linea: rgba(17, 17, 20, .1);
+    --rojo: #C8102E;         /* el rojo de la chaqueta estrella */
+    --rojo-oscuro: #A50F23;
+    --noche: #120304;        /* negro con un punto de vino, para el pie y las bandas oscuras */
+    --display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+    --sans: "Manrope", -apple-system, "Segoe UI", Arial, sans-serif;
+    --curva: cubic-bezier(.2, .7, .2, 1);
+    --ancho: 1320px;
+    --margen: clamp(1rem, 4vw, 3rem);
+    --sombra: 0 30px 60px -30px rgba(17, 17, 20, .35);
+    --sombra-suave: 0 16px 36px -20px rgba(17, 17, 20, .28);
+  }
+
+  /* ============ 2. BASE ============ */
+  a {
+    text-decoration: none;
+    color: var(--tinta);
+    transition: color .3s ease, background .3s ease, border-color .3s ease, transform .4s var(--curva);
+  }
+  a:hover { color: var(--rojo); }
+
+  @font-face { font-family: "Bodoni Moda"; src: url("fonts/bodoni-moda-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+  @font-face { font-family: "Bodoni Moda"; src: url("fonts/bodoni-moda-latin-500-italic.woff2") format("woff2"); font-weight: 500; font-style: italic; font-display: swap; }
+  @font-face { font-family: "Bodoni Moda"; src: url("fonts/bodoni-moda-latin-600-normal.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+  @font-face { font-family: "Bodoni Moda"; src: url("fonts/bodoni-moda-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+  @font-face { font-family: "Manrope"; src: url("fonts/manrope-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Manrope"; src: url("fonts/manrope-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+  @font-face { font-family: "Manrope"; src: url("fonts/manrope-latin-600-normal.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+  @font-face { font-family: "Manrope"; src: url("fonts/manrope-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+  body {
+    font-family: var(--sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--texto);
+    background: var(--blanco);
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+  }
+  [hidden] { display: none !important; }
+  ul, ol, menu { list-style: none; }
+  figure { position: relative; }
+  img { display: block; width: 100%; height: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 600; color: var(--tinta); line-height: 1.02; letter-spacing: -.02em; text-wrap: balance; }
+  h1 em, h2 em, h3 em { font-style: italic; font-weight: 500; color: var(--rojo); }
+  h2 { font-size: clamp(2.2rem, 5vw, 4.2rem); }
+  p { text-wrap: pretty; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; border: 0; background: none; }
+  :focus-visible { outline: 2px solid var(--rojo); outline-offset: 3px; }
+  ::selection { background: var(--rojo); color: var(--blanco); }
+
+  /* Rótulo pequeño con punto rojo: «Colección 2026» */
+  main > section > header > p:first-of-type {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    font-size: .74rem;
+    font-weight: 700;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--suave);
+  }
+  main > section > header > p:first-of-type::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--rojo);
+    box-shadow: 0 0 0 4px rgba(200, 16, 46, .14);
+  }
+
+  /* ============ 3. CABECERA ============ */
+  body > header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem var(--margen);
+    transition: background .4s ease, padding .4s var(--curva), box-shadow .4s ease;
+  }
+  body > header[data-scroll] {
+    padding-block: .6rem;
+    background: rgba(255, 255, 255, .84);
+    backdrop-filter: blur(18px) saturate(1.4);
+    box-shadow: 0 1px 0 var(--linea);
+  }
+  /* Logotipo: «ch» en un círculo + el nombre en Bodoni */
+  body > header > a:first-of-type {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    width: fit-content;
+    font-family: var(--display);
+    font-size: 1.55rem;
+    font-weight: 700;
+    letter-spacing: -.03em;
+  }
+  body > header > a:first-of-type b {
+    display: grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border: 1.5px solid var(--tinta);
+    border-radius: 50%;
+    font-family: var(--display);
+    font-size: .9rem;
+    font-style: italic;
+    font-weight: 500;
+    transition: background .3s ease, color .3s ease, rotate .6s var(--curva);
+  }
+  body > header > a:first-of-type:hover { color: var(--tinta); }
+  body > header > a:first-of-type:hover b { background: var(--tinta); color: var(--blanco); rotate: -12deg; }
+  body > header nav ul { display: flex; gap: .2rem; padding: .3rem; border-radius: 40px; background: rgba(255, 255, 255, .72); box-shadow: inset 0 0 0 1px var(--linea); }
+  body > header nav a { display: block; padding: .5rem 1.05rem; border-radius: 40px; font-size: .9rem; font-weight: 600; color: var(--texto); }
+  body > header nav a:hover { background: var(--gris); color: var(--tinta); }
+  body > header nav a[aria-current] { background: var(--tinta); color: var(--blanco); }
+  /* Botón de la cesta: bolsa dibujada con CSS y número de productos */
+  body > header > button:first-of-type {
+    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .5rem .55rem .5rem 1rem;
+    border-radius: 40px;
+    border: 1.5px solid var(--tinta);
+    background: var(--blanco);
+    font-size: .9rem;
+    font-weight: 700;
+    color: var(--tinta);
+    transition: background .3s ease, color .3s ease;
+  }
+  body > header > button:first-of-type::before {
+    content: "";
+    width: 15px;
+    height: 13px;
+    margin-top: 4px;
+    border: 2px solid currentColor;
+    border-radius: 3px 3px 5px 5px;
+    background: radial-gradient(circle at 50% -2px, transparent 4px, currentColor 4.5px, currentColor 6px, transparent 6.5px) 0 -7px / 100% 12px no-repeat;
+  }
+  body > header > button:first-of-type b {
+    display: grid;
+    place-items: center;
+    min-width: 1.65rem;
+    height: 1.65rem;
+    padding: 0 .4rem;
+    border-radius: 20px;
+    background: var(--rojo);
+    font-size: .78rem;
+    color: var(--blanco);
+  }
+  body > header > button:first-of-type[data-salto] b { animation: salto .6s var(--curva); }
+  body > header > button:first-of-type:hover { background: var(--tinta); color: var(--blanco); }
+  body > header > button:nth-of-type(2) {
+    display: none;
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--linea);
+    background: var(--blanco);
+  }
+  body > header > button:nth-of-type(2)::before,
+  body > header > button:nth-of-type(2)::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 18px;
+    height: 2px;
+    margin: -1px 0 0 -9px;
+    border-radius: 2px;
+    background: var(--tinta);
+    transition: transform .4s var(--curva);
+  }
+  body > header > button:nth-of-type(2)::before { transform: translateY(-4px); }
+  body > header > button:nth-of-type(2)::after { transform: translateY(4px); }
+  body > header > button:nth-of-type(2)[aria-expanded="true"]::before { transform: rotate(45deg); }
+  body > header > button:nth-of-type(2)[aria-expanded="true"]::after { transform: rotate(-45deg); }
+
+  /* ============ 4. PANEL DE LA CESTA ============ */
+  body > dialog {
+    width: min(460px, 100%);
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0 0 0 auto;
+    padding: 0;
+    border: 0;
+    background: var(--blanco);
+    color: var(--texto);
+  }
+  body > dialog[open] { display: grid; grid-template-rows: auto auto auto minmax(0, 1fr) auto; animation: panel .5s var(--curva); }
+  body > dialog::backdrop { background: rgba(17, 17, 20, .38); backdrop-filter: blur(4px); animation: aparecer .4s ease; }
+  body > dialog > header { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 1.6rem 1rem; }
+  body > dialog h2 { font-size: 2rem; }
+  body > dialog > header button { width: 42px; height: 42px; border-radius: 50%; background: var(--gris); transition: background .3s ease, color .3s ease, rotate .4s var(--curva); }
+  body > dialog > header button:hover { background: var(--tinta); color: var(--blanco); rotate: 90deg; }
+  body > dialog > p { padding: 0 1.6rem; font-size: .88rem; font-weight: 600; color: var(--tinta); }
+  body > dialog > progress { width: calc(100% - 3.2rem); height: 6px; margin: .6rem 1.6rem 1.2rem; border: 0; border-radius: 6px; background: var(--gris-2); overflow: hidden; appearance: none; }
+  body > dialog > progress::-webkit-progress-bar { background: var(--gris-2); }
+  body > dialog > progress::-webkit-progress-value { background: var(--rojo); border-radius: 6px; transition: width .5s var(--curva); }
+  body > dialog > progress::-moz-progress-bar { background: var(--rojo); border-radius: 6px; }
+  body > dialog > ul { display: grid; align-content: start; gap: .8rem; padding: 0 1.6rem 1rem; overflow-y: auto; }
+  body > dialog > ul li {
+    display: grid;
+    grid-template-columns: 84px minmax(0, 1fr) auto;
+    grid-template-areas: "foto texto importe" "foto cantidad quitar";
+    align-items: center;
+    gap: .4rem .9rem;
+    padding: .7rem;
+    border-radius: 20px;
+    background: var(--hueso);
+  }
+  body > dialog > ul li:only-child:not(:has(figure)) { display: block; padding: 2rem 1.4rem; text-align: center; color: var(--suave); }
+  body > dialog > ul li figure { grid-area: foto; aspect-ratio: 1; border-radius: 14px; background: var(--blanco); }
+  body > dialog > ul li figure img { height: 100%; object-fit: contain; padding: .3rem; }
+  body > dialog > ul li p:first-of-type { grid-area: texto; display: grid; line-height: 1.35; }
+  body > dialog > ul li p:first-of-type a { font-weight: 700; }
+  body > dialog > ul li p:first-of-type small { font-size: .82rem; color: var(--suave); }
+  body > dialog > ul li p:last-of-type { grid-area: cantidad; display: inline-flex; align-items: center; width: fit-content; border-radius: 30px; background: var(--blanco); box-shadow: inset 0 0 0 1px var(--linea); }
+  body > dialog > ul li p:last-of-type button { width: 32px; height: 32px; border-radius: 50%; font-size: 1.05rem; transition: background .25s ease; }
+  body > dialog > ul li p:last-of-type button:hover { background: var(--gris); }
+  body > dialog > ul li p:last-of-type output { min-width: 1.6rem; text-align: center; font-weight: 700; }
+  body > dialog > ul li b { grid-area: importe; font-weight: 700; color: var(--tinta); }
+  body > dialog > ul li > button { grid-area: quitar; justify-self: end; font-size: .82rem; font-weight: 600; color: var(--suave); text-decoration: underline; text-underline-offset: 3px; }
+  body > dialog > ul li > button:hover { color: var(--rojo); }
+  body > dialog > footer { display: grid; gap: .8rem; padding: 1.2rem 1.6rem 1.6rem; border-top: 1px solid var(--linea); }
+  body > dialog dl { display: grid; grid-template-columns: 1fr auto; gap: .35rem; font-size: .95rem; }
+  body > dialog dl dd { text-align: right; font-weight: 700; color: var(--tinta); }
+  body > dialog dl dd:first-of-type { font-family: var(--display); font-size: 1.35rem; }
+  body > dialog footer a { display: flex; justify-content: center; gap: .6rem; padding: 1.05rem; border-radius: 40px; background: var(--tinta); font-weight: 700; color: var(--blanco); }
+  body > dialog footer a::after { content: "\2192"; }
+  body > dialog footer a:hover { background: var(--rojo); color: var(--blanco); }
+  body > dialog footer a[aria-disabled] { opacity: .35; pointer-events: none; }
+  body > dialog footer button { padding: .6rem; font-weight: 600; color: var(--suave); }
+  body > dialog footer button:hover { color: var(--tinta); }
+
+  /* ============ 5. AVISO AL AÑADIR ============ */
+  body > aside {
+    position: fixed;
+    right: var(--margen);
+    bottom: var(--margen);
+    z-index: 60;
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: .9rem;
+    width: min(420px, calc(100% - 2rem));
+    padding: .7rem .7rem .7rem .7rem;
+    border-radius: 22px;
+    background: var(--tinta);
+    box-shadow: var(--sombra);
+    color: rgba(255, 255, 255, .78);
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 20px;
+    transition: opacity .35s ease, translate .5s var(--curva), visibility 0s .5s;
+  }
+  body > aside[data-visible] { opacity: 1; visibility: visible; translate: 0 0; transition: opacity .35s ease, translate .5s var(--curva); }
+  body > aside figure { aspect-ratio: 1; border-radius: 14px; background: var(--blanco); }
+  body > aside figure img { height: 100%; object-fit: contain; padding: .25rem; }
+  body > aside p { display: grid; font-size: .85rem; line-height: 1.35; }
+  body > aside strong { color: var(--blanco); }
+  body > aside button { padding: .7rem 1rem; border-radius: 30px; background: var(--blanco); font-size: .85rem; font-weight: 700; color: var(--tinta); transition: background .3s ease, color .3s ease; }
+  body > aside button:hover { background: var(--rojo); color: var(--blanco); }
+
+  /* ============ 6. PIE: el Club sobre un horizonte rojo y una tarjeta con los enlaces ============ */
+  body > footer {
+    --horizonte: 50%;
+    position: relative;
+    display: grid;
+    justify-items: center;
+    padding: clamp(5rem, 10vw, 8.5rem) var(--margen) 0;
+    overflow: hidden;
+    isolation: isolate;
+    background:
+      radial-gradient(42% 7% at 50% var(--horizonte), rgba(255, 150, 140, .5), transparent 80%),
+      radial-gradient(70% 16% at 50% var(--horizonte), rgba(240, 40, 60, .85), transparent 78%),
+      radial-gradient(95% 28% at 50% var(--horizonte), rgba(170, 14, 36, .9), transparent 80%),
+      radial-gradient(130% 45% at 50% var(--horizonte), rgba(90, 8, 20, .9), transparent 82%),
+      var(--noche);
+    color: rgba(255, 255, 255, .74);
+  }
+  /* Estrellas que titilan sobre el horizonte */
+  body > footer::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 40%;
+    z-index: -1;
+    background:
+      radial-gradient(1.5px 1.5px at 8% 22%, #FFFFFF, transparent),
+      radial-gradient(1px 1px at 17% 61%, #FFFFFF, transparent),
+      radial-gradient(1.5px 1.5px at 26% 38%, rgba(255, 255, 255, .8), transparent),
+      radial-gradient(1px 1px at 33% 78%, #FFFFFF, transparent),
+      radial-gradient(2px 2px at 41% 12%, rgba(255, 255, 255, .7), transparent),
+      radial-gradient(1px 1px at 47% 70%, #FFFFFF, transparent),
+      radial-gradient(1.5px 1.5px at 58% 84%, #FFFFFF, transparent),
+      radial-gradient(1px 1px at 64% 30%, rgba(255, 255, 255, .8), transparent),
+      radial-gradient(2px 2px at 72% 66%, #FFFFFF, transparent),
+      radial-gradient(1px 1px at 79% 18%, #FFFFFF, transparent),
+      radial-gradient(1.5px 1.5px at 86% 52%, rgba(255, 255, 255, .8), transparent),
+      radial-gradient(1px 1px at 93% 80%, #FFFFFF, transparent);
+    animation: titilar 5s ease-in-out infinite alternate;
+  }
+  /* Destellos en forma de cruz, como en el cielo del horizonte */
+  body > footer::after {
+    content: "\2726       \2726                    \2726            \2726";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(var(--horizonte) - 9rem);
+    z-index: -1;
+    font-size: .7rem;
+    letter-spacing: .4rem;
+    text-align: center;
+    white-space: pre;
+    color: rgba(255, 210, 210, .55);
+    animation: titilar 3.4s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes titilar { from { opacity: .45; } to { opacity: 1; } }
+
+  /* El Club: título en dos líneas, texto y correo */
+  body > footer > section:first-of-type { display: grid; justify-items: center; gap: 1.2rem; max-width: 980px; text-align: center; }
+  body > footer h2 { font-size: clamp(2.4rem, 5.2vw, 4.6rem); line-height: 1.02; color: var(--blanco); }
+  body > footer h2 em { color: #FF8A9A; }
+  body > footer > section:first-of-type > p { max-width: 540px; font-size: 1.05rem; }
+  body > footer form { display: flex; gap: .4rem; width: min(470px, 100%); margin-top: .6rem; padding: .35rem; border-radius: 40px; background: rgba(255, 255, 255, .09); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18); backdrop-filter: blur(10px); }
+  body > footer input { flex: 1; min-width: 0; padding: 0 1.1rem; border: 0; outline: 0; background: transparent; color: var(--blanco); }
+  body > footer input::placeholder { color: rgba(255, 255, 255, .62); }
+  body > footer form button { padding: .85rem 1.4rem; border-radius: 40px; background: linear-gradient(180deg, #F0334B, var(--rojo)); box-shadow: 0 10px 30px -8px rgba(240, 51, 75, .8); font-weight: 700; color: var(--blanco); transition: background .3s ease, color .3s ease, transform .4s var(--curva); }
+  body > footer form button:hover { background: var(--blanco); color: var(--tinta); transform: translateY(-2px); }
+  body > footer output { display: block; min-height: 1.4em; font-size: .9rem; color: #FFC2CA; }
+
+  /* La tarjeta: marca y redes a la izquierda, tres columnas de enlaces */
+  body > footer > section:last-of-type {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr));
+    gap: 2rem 2.4rem;
+    width: min(1120px, 100%);
+    margin-top: clamp(5rem, 9vw, 7.5rem);
+    padding: 2.6rem clamp(1.4rem, 3vw, 2.8rem) 0;
+    border-radius: 28px 28px 0 0;
+    background: linear-gradient(180deg, rgba(40, 6, 10, .72), rgba(16, 3, 5, .94) 60%);
+    backdrop-filter: blur(18px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), inset 0 0 0 1px rgba(255, 255, 255, .06);
+  }
+  body > footer > section:last-of-type > header { display: grid; align-content: start; gap: .9rem; }
+  body > footer > section:last-of-type > header > a {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    width: fit-content;
+    font-family: var(--display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    color: var(--blanco);
+  }
+  body > footer > section:last-of-type > header > a b {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1.5px solid #FF5C6F;
+    border-radius: 50%;
+    font-size: .85rem;
+    font-style: italic;
+    font-weight: 500;
+    color: #FF5C6F;
+  }
+  body > footer > section:last-of-type > header > p { font-weight: 700; color: var(--blanco); }
+  /* Redes: iconos dibujados con CSS */
+  body > footer > section:last-of-type > header ul { display: flex; gap: .55rem; margin-top: .2rem; }
+  body > footer > section:last-of-type > header ul a {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .07);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12);
+    font-family: var(--display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, .85);
+    transition: background .3s ease, color .3s ease, transform .4s var(--curva);
+  }
+  body > footer > section:last-of-type > header ul a:hover { background: var(--rojo); color: var(--blanco); transform: translateY(-3px); }
+  body > footer > section:last-of-type > header ul li:nth-of-type(1) a::before { content: ""; width: 16px; height: 16px; border: 2px solid currentColor; border-radius: 5px; background: radial-gradient(circle, transparent 3px, currentColor 3.5px, currentColor 5px, transparent 5.5px); }
+  body > footer > section:last-of-type > header ul li:nth-of-type(1) a::after { content: ""; position: absolute; left: 22px; top: 13px; width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
+  body > footer > section:last-of-type > header ul li:nth-of-type(2) a::before { content: "\266A"; font-family: var(--sans); font-size: 1.15rem; }
+  body > footer > section:last-of-type > header ul li:nth-of-type(3) a::before { content: ""; width: 20px; height: 14px; border-radius: 4px; background: currentColor; }
+  body > footer > section:last-of-type > header ul li:nth-of-type(3) a::after { content: ""; position: absolute; left: 17px; top: 15px; border: 4px solid transparent; border-left: 6px solid var(--noche); border-right: 0; }
+  body > footer > section:last-of-type > header ul li:nth-of-type(3) a:hover::after { border-left-color: var(--rojo); }
+  body > footer > section:last-of-type > header ul li:nth-of-type(4) a::before { content: "P"; font-style: italic; }
+  body > footer > section:last-of-type > header ul li:nth-of-type(5) a::before { content: "X"; font-family: var(--sans); font-size: .95rem; }
+  /* Columnas de enlaces con etiquetas */
+  body > footer > section:last-of-type > nav ul { display: grid; gap: .55rem; }
+  body > footer > section:last-of-type > nav li { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .55rem; }
+  body > footer > section:last-of-type > nav a { font-size: .92rem; color: rgba(255, 255, 255, .78); }
+  body > footer > section:last-of-type > nav a:hover { color: var(--blanco); }
+  body > footer > section:last-of-type > nav small { padding: .12rem .55rem; border-radius: 20px; background: rgba(255, 92, 111, .18); box-shadow: inset 0 0 0 1px rgba(255, 92, 111, .4); font-size: .7rem; font-weight: 700; color: #FFC2CA; }
+  /* Abajo: legales separados por barras y derechos */
+  body > footer > section:last-of-type > p {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: .8rem 2rem;
+    margin-top: 1.2rem;
+    padding: 1.5rem 0 1.8rem;
+    border-top: 1px solid rgba(255, 255, 255, .12);
+    font-size: .84rem;
+  }
+  body > footer > section:last-of-type > p a { font-weight: 600; color: rgba(255, 255, 255, .85); }
+  body > footer > section:last-of-type > p a:hover { color: var(--blanco); }
+  body > footer > section:last-of-type > p small { font-size: inherit; }
+
+  /* ============ 7. ANIMACIONES ============ */
+  @keyframes subir { from { opacity: 0; translate: 0 30px; } }
+  @keyframes aparecer { from { opacity: 0; } }
+  @keyframes panel { from { translate: 100% 0; } }
+  @keyframes salto { 40% { scale: 1.45; } }
+  @keyframes flotar { 50% { translate: 0 -12px; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+
+  /* ============ 8. CABECERA Y PIE EN EL MÓVIL ============ */
+  @media (max-width: 1000px) {
+    body > footer { --horizonte: 38%; }
+    body > footer > section:last-of-type { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    body > footer > section:last-of-type > header { grid-column: 1 / -1; }
+  }
+  @media (max-width: 640px) {
+    body > footer { --horizonte: 30%; }
+    body > footer > section:last-of-type { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    body > footer > section:last-of-type > p { flex-direction: column; }
+  }
+  @media (max-width: 680px) {
+    body > header { grid-template-columns: 1fr auto auto; gap: .5rem; }
+    body > header > button:nth-of-type(2) { display: block; }
+    body > header > button:first-of-type { padding-left: .8rem; font-size: 0; gap: .45rem; }
+    body > header > button:first-of-type b { font-size: .78rem; }
+    body > header nav {
+      position: absolute;
+      top: calc(100% + .4rem);
+      left: 1rem;
+      right: 1rem;
+      padding: .5rem;
+      border-radius: 24px;
+      background: var(--blanco);
+      box-shadow: var(--sombra);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity .3s ease, transform .4s var(--curva), visibility 0s .4s;
+    }
+    body > header[data-menu] nav { opacity: 1; visibility: visible; transform: none; transition: opacity .3s ease, transform .4s var(--curva); }
+    body > header nav ul { flex-direction: column; background: none; box-shadow: none; }
+    body > header nav a { padding: .95rem 1.1rem; font-size: 1.15rem; border-radius: 18px; }
+    body > aside { right: 1rem; bottom: 1rem; }
+  }
+
+  /* ============ 9. COLECCIÓN EN 3D: el visor y las opciones ============ */
+  body { background: var(--hueso); }
+  main > section:first-of-type {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(320px, 1fr);
+    align-items: start;
+    gap: 1.5rem clamp(1.4rem, 3vw, 2.6rem);
+    max-width: calc(var(--ancho) + var(--margen) * 2);
+    margin: 0 auto;
+    padding: 6.8rem var(--margen) clamp(3rem, 6vw, 5rem);
+  }
+  main > section:first-of-type > header { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: end; gap: .8rem 3rem; }
+  main > section:first-of-type > header > p:first-of-type { grid-column: 1 / -1; }
+  main > section:first-of-type h1 { font-size: clamp(2.6rem, 5vw, 4.6rem); }
+  main > section:first-of-type > header > p:last-of-type { max-width: 460px; margin-bottom: .4rem; font-size: 1.04rem; color: var(--suave); }
+
+  /* El visor acompaña al bajar mientras se leen las opciones */
+  main > section:first-of-type > figure {
+    position: sticky;
+    top: 5.5rem;
+    height: clamp(460px, calc(100svh - 7rem), 760px);
+    border-radius: 34px;
+    background: radial-gradient(circle at 50% 42%, var(--blanco) 0%, var(--blanco) 34%, var(--gris-2) 100%);
+    box-shadow: 0 40px 80px -50px rgba(17, 17, 20, .45), inset 0 0 0 1px rgba(17, 17, 20, .05);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  main > section:first-of-type > figure::before {
+    content: "3D";
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    z-index: -1;
+    font-family: var(--display);
+    font-size: clamp(10rem, 24vw, 22rem);
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1;
+    color: rgba(17, 17, 20, .035);
+    translate: -50% -50%;
+  }
+  main > section:first-of-type > figure canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+  main > section:first-of-type > figure canvas:active { cursor: grabbing; }
+  main > section:first-of-type > figure figcaption { position: absolute; left: 1.6rem; top: 1.4rem; display: grid; font-size: .76rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--suave); pointer-events: none; }
+  main > section:first-of-type > figure figcaption strong { font-family: var(--display); font-size: 2rem; font-weight: 600; letter-spacing: -.01em; text-transform: none; color: var(--tinta); }
+  main > section:first-of-type > figure > p {
+    position: absolute;
+    left: 50%;
+    bottom: 1.2rem;
+    padding: .55rem 1rem;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, .85);
+    box-shadow: inset 0 0 0 1px var(--linea);
+    font-size: .8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    translate: -50% 0;
+    pointer-events: none;
+  }
+  /* Mientras carga y si el navegador no muestra 3D */
+  main > section:first-of-type > figure:not([data-estado])::after {
+    content: "Cargando la chaqueta\2026";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    font-weight: 600;
+    color: var(--suave);
+    translate: -50% -50%;
+    animation: latir 1.4s ease-in-out infinite;
+  }
+  main > section:first-of-type > figure[data-estado="sin-3d"]::after { content: "Tu navegador no muestra 3D: mira las fotos de abajo"; animation: none; }
+  @keyframes latir { 50% { opacity: .4; } }
+
+  /* Opciones: color, vista, talla y compra */
+  main > section:first-of-type > form { display: grid; gap: 1.6rem; padding: clamp(1.4rem, 2.6vw, 2rem); border-radius: 30px; background: var(--blanco); box-shadow: 0 30px 60px -40px rgba(17, 17, 20, .4); }
+  main > section:first-of-type fieldset { display: flex; flex-wrap: wrap; gap: .6rem; border: 0; }
+  main > section:first-of-type legend { display: flex; justify-content: space-between; width: 100%; margin-bottom: .8rem; font-size: .76rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--suave); }
+  main > section:first-of-type legend output { font-size: .92rem; letter-spacing: 0; text-transform: none; color: var(--tinta); }
+  main > section:first-of-type fieldset input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  main > section:first-of-type fieldset label { position: relative; cursor: pointer; }
+  main > section:first-of-type fieldset label:has(input:focus-visible) { outline: 2px solid var(--rojo); outline-offset: 3px; border-radius: 14px; }
+  /* colores */
+  main > section:first-of-type fieldset:first-of-type { gap: .4rem .9rem; }
+  main > section:first-of-type fieldset:first-of-type span { display: grid; justify-items: center; gap: .4rem; min-width: 58px; font-size: .76rem; font-weight: 600; color: var(--suave); }
+  main > section:first-of-type fieldset:first-of-type span::before {
+    content: "";
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 34% 28%, rgba(255, 255, 255, .32), transparent 50%), var(--muestra);
+    box-shadow: 0 0 0 3px var(--blanco), 0 0 0 4px var(--linea);
+    transition: box-shadow .3s ease, transform .4s var(--curva);
+  }
+  main > section:first-of-type fieldset:first-of-type label:has(input[value="salvia"]) { --muestra: #9C9782; }
+  main > section:first-of-type fieldset:first-of-type label:has(input[value="cafe"]) { --muestra: #35281F; }
+  main > section:first-of-type fieldset:first-of-type label:has(input[value="marino"]) { --muestra: #1F2B42; }
+  main > section:first-of-type fieldset:first-of-type label:has(input[value="negro"]) { --muestra: #1E1F22; }
+  main > section:first-of-type fieldset:first-of-type label:has(input[value="rojo"]) { --muestra: #A3172F; }
+  main > section:first-of-type fieldset:first-of-type label:hover span::before { transform: translateY(-3px); }
+  main > section:first-of-type fieldset:first-of-type label:has(input:checked) span { color: var(--tinta); }
+  main > section:first-of-type fieldset:first-of-type label:has(input:checked) span::before { box-shadow: 0 0 0 3px var(--blanco), 0 0 0 5px var(--tinta); }
+  /* vistas y tallas: píldoras */
+  main > section:first-of-type fieldset:nth-of-type(2) span,
+  main > section:first-of-type fieldset:nth-of-type(3) span { display: block; padding: .6rem 1rem; border-radius: 30px; background: var(--hueso); font-size: .88rem; font-weight: 600; color: var(--texto); transition: background .25s ease, color .25s ease; }
+  main > section:first-of-type fieldset:nth-of-type(3) span { min-width: 3.1rem; text-align: center; }
+  main > section:first-of-type fieldset:nth-of-type(2) label:hover span,
+  main > section:first-of-type fieldset:nth-of-type(3) label:hover span { background: var(--gris-2); }
+  main > section:first-of-type fieldset:nth-of-type(2) label:has(input:checked) span,
+  main > section:first-of-type fieldset:nth-of-type(3) label:has(input:checked) span { background: var(--tinta); color: var(--blanco); }
+  main > section:first-of-type fieldset:nth-of-type(3) label[data-pocas]::after { content: ""; position: absolute; right: 2px; top: 2px; width: 8px; height: 8px; border-radius: 50%; background: #E8A317; box-shadow: 0 0 0 2px var(--blanco); }
+  main > section:first-of-type fieldset:nth-of-type(3) label:has(input:disabled) { cursor: not-allowed; }
+  main > section:first-of-type fieldset:nth-of-type(3) label:has(input:disabled) span { background: transparent; box-shadow: inset 0 0 0 1px var(--linea); color: #A6A6AE; text-decoration: line-through; }
+  main > section:first-of-type form > output { min-height: 3.2em; padding: 1rem 1.1rem; border-radius: 18px; background: var(--hueso); font-size: .94rem; line-height: 1.5; color: var(--tinta); }
+  /* Botones: girar sola, añadir a la cesta y ver la ficha */
+  main > section:first-of-type form > p { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .6rem; }
+  main > section:first-of-type form > p button,
+  main > section:first-of-type form > p a { display: inline-flex; justify-content: center; align-items: center; gap: .5rem; padding: .75rem 1.15rem; border-radius: 30px; font-size: .88rem; font-weight: 700; white-space: nowrap; }
+  main > section:first-of-type form > p button[type="button"] { box-shadow: inset 0 0 0 1.5px var(--tinta); color: var(--tinta); }
+  main > section:first-of-type form > p button[type="button"]::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--suave); }
+  main > section:first-of-type form > p button[aria-pressed="true"] { background: var(--tinta); color: var(--blanco); }
+  main > section:first-of-type form > p button[aria-pressed="true"]::before { background: #FF5C6F; animation: latir 1.4s ease-in-out infinite; }
+  main > section:first-of-type form > p button[type="submit"] { grid-column: 1 / -1; padding-block: 1rem; background: var(--rojo); font-size: .95rem; color: var(--blanco); transition: background .3s ease; }
+  main > section:first-of-type form > p button[type="submit"]:hover { background: var(--tinta); }
+  main > section:first-of-type form > p button[type="submit"] data { font-family: var(--display); font-size: 1.05rem; color: var(--blanco); }
+  main > section:first-of-type form > p a { box-shadow: inset 0 0 0 1px var(--linea); color: var(--tinta); }
+  main > section:first-of-type form > p a::after { content: "\2192"; transition: translate .4s var(--curva); }
+  main > section:first-of-type form > p a:hover { color: var(--rojo); }
+  main > section:first-of-type form > p a:hover::after { translate: 4px 0; }
+  main > section:first-of-type form > ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+  main > section:first-of-type form > ul li { padding: .8rem .7rem; border-radius: 16px; background: var(--hueso); font-size: .78rem; line-height: 1.35; }
+  main > section:first-of-type form > ul li strong { display: block; font-family: var(--display); font-size: 1.3rem; color: var(--tinta); }
+
+  /* ============ 10. LOS CINCO COLORES (fotos de estudio) ============ */
+  main > section:nth-of-type(2),
+  main > section:nth-of-type(3),
+  main > section:nth-of-type(4),
+  main > section:nth-of-type(5) { max-width: calc(var(--ancho) + var(--margen) * 2); margin: 0 auto; padding: clamp(3.5rem, 7vw, 6rem) var(--margen); }
+  main > section:nth-of-type(n+2) > header { display: grid; gap: .8rem; max-width: 760px; margin-bottom: clamp(1.8rem, 4vw, 3rem); }
+  main > section:nth-of-type(n+2) > header > p:last-of-type { font-size: 1.04rem; color: var(--suave); }
+  main > section:nth-of-type(2) > figure { margin-bottom: 1.4rem; border-radius: 30px; overflow: hidden; background: #DADADC; }
+  main > section:nth-of-type(2) > figure figcaption { position: absolute; left: 1.4rem; bottom: 1.2rem; padding: .45rem .9rem; border-radius: 30px; background: rgba(255, 255, 255, .86); font-size: .82rem; font-weight: 600; color: var(--tinta); }
+  main > section:nth-of-type(2) > ul { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(.6rem, 1.4vw, 1.1rem); }
+  main > section:nth-of-type(2) a { display: block; }
+  main > section:nth-of-type(2) a figure { border-radius: 22px; overflow: hidden; background: #DADADC; transition: translate .5s var(--curva), box-shadow .5s ease; }
+  main > section:nth-of-type(2) a:hover figure { translate: 0 -6px; box-shadow: 0 24px 40px -26px rgba(17, 17, 20, .5); }
+  main > section:nth-of-type(2) a figcaption { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .8rem .9rem; background: var(--blanco); font-weight: 700; color: var(--tinta); }
+  main > section:nth-of-type(2) a figcaption small { font-size: .74rem; font-weight: 600; letter-spacing: .06em; color: var(--suave); }
+
+  /* ============ 11. DETALLES DE CERCA ============ */
+  main > section:nth-of-type(3) > ul { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(.8rem, 1.6vw, 1.2rem); }
+  main > section:nth-of-type(3) figure { overflow: hidden; border-radius: 24px; background: var(--blanco); }
+  main > section:nth-of-type(3) figure img { aspect-ratio: 4 / 5; object-fit: cover; transition: scale .8s var(--curva); }
+  main > section:nth-of-type(3) figure:hover img { scale: 1.05; }
+  main > section:nth-of-type(3) figcaption { position: relative; display: grid; gap: .25rem; padding: 1rem 1.1rem 1.2rem; background: var(--blanco); font-size: .9rem; line-height: 1.45; color: var(--suave); }
+  main > section:nth-of-type(3) figcaption strong { font-family: var(--display); font-size: 1.35rem; font-weight: 600; color: var(--tinta); }
+
+  /* ============ 12. MEDIDAS ============ */
+  main > section:nth-of-type(4) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem clamp(2rem, 5vw, 4rem); align-items: start; }
+  main > section:nth-of-type(4) > header { grid-column: 1 / -1; margin-bottom: 0; }
+  main > section:nth-of-type(4) > figure { grid-column: 1 / -1; overflow: hidden; border-radius: 26px; box-shadow: 0 30px 60px -44px rgba(17, 17, 20, .4); }
+  main > section:nth-of-type(4) table { width: 100%; border-collapse: collapse; background: var(--blanco); border-radius: 24px; overflow: hidden; box-shadow: 0 30px 60px -44px rgba(17, 17, 20, .4); }
+  main > section:nth-of-type(4) caption { padding: 0 0 .8rem; font-size: .76rem; font-weight: 700; letter-spacing: .14em; text-align: left; text-transform: uppercase; color: var(--suave); }
+  main > section:nth-of-type(4) th,
+  main > section:nth-of-type(4) td { padding: .85rem 1.2rem; border-bottom: 1px solid var(--linea); text-align: left; font-size: .95rem; }
+  main > section:nth-of-type(4) tbody tr:last-of-type th,
+  main > section:nth-of-type(4) tbody tr:last-of-type td { border-bottom: 0; }
+  main > section:nth-of-type(4) thead th { font-size: .74rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--suave); }
+  main > section:nth-of-type(4) tbody th { font-weight: 600; color: var(--tinta); }
+  main > section:nth-of-type(4) td { font-family: var(--display); font-size: 1.15rem; font-weight: 600; color: var(--tinta); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  main > section:nth-of-type(4) dl { display: grid; gap: .1rem; }
+  main > section:nth-of-type(4) dt { margin-top: .9rem; font-size: .76rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--suave); }
+  main > section:nth-of-type(4) dt:first-of-type { margin-top: 0; }
+  main > section:nth-of-type(4) dd { padding-bottom: .9rem; border-bottom: 1px solid var(--linea); color: var(--tinta); }
+  main > section:nth-of-type(4) > p { grid-column: 1 / -1; font-size: .88rem; color: var(--suave); }
+
+  /* ============ 13. DESCARGAS ============ */
+  main > section:nth-of-type(5) > ul { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .8rem; }
+  main > section:nth-of-type(5) a {
+    display: grid;
+    gap: .2rem;
+    padding: 1.1rem 1.2rem;
+    border-radius: 20px;
+    background: var(--blanco);
+    box-shadow: inset 0 0 0 1px var(--linea);
+    font-weight: 700;
+    color: var(--tinta);
+  }
+  main > section:nth-of-type(5) a::before { content: ""; width: 26px; height: 26px; margin-bottom: .5rem; border-radius: 50%; background: var(--muestra); box-shadow: 0 0 0 3px var(--hueso); }
+  main > section:nth-of-type(5) li:nth-of-type(1) a { --muestra: #9C9782; }
+  main > section:nth-of-type(5) li:nth-of-type(2) a { --muestra: #35281F; }
+  main > section:nth-of-type(5) li:nth-of-type(3) a { --muestra: #1F2B42; }
+  main > section:nth-of-type(5) li:nth-of-type(4) a { --muestra: #1E1F22; }
+  main > section:nth-of-type(5) li:nth-of-type(5) a { --muestra: #A3172F; }
+  main > section:nth-of-type(5) a small { font-size: .8rem; font-weight: 600; color: var(--suave); }
+  main > section:nth-of-type(5) a:hover { background: var(--tinta); color: var(--blanco); }
+  main > section:nth-of-type(5) a:hover small { color: rgba(255, 255, 255, .7); }
+
+  @media (max-width: 1000px) {
+    main > section:first-of-type { grid-template-columns: minmax(0, 1fr); padding-top: 6.4rem; }
+    main > section:first-of-type > header { grid-template-columns: minmax(0, 1fr); }
+    main > section:first-of-type > figure { position: relative; top: 0; height: min(70svh, 620px); }
+    main > section:nth-of-type(2) > ul { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    main > section:nth-of-type(3) > ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    main > section:nth-of-type(4) { grid-template-columns: minmax(0, 1fr); }
+    main > section:nth-of-type(5) > ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 560px) {
+    main > section:first-of-type > figure figcaption strong { font-size: 1.5rem; }
+    main > section:first-of-type form > ul { grid-template-columns: minmax(0, 1fr); }
+    main > section:first-of-type fieldset:first-of-type { gap: .4rem .5rem; }
+    main > section:first-of-type fieldset:first-of-type span { min-width: 50px; }
+    main > section:first-of-type fieldset:first-of-type span::before { width: 40px; height: 40px; }
+    main > section:first-of-type fieldset:nth-of-type(3) { gap: .4rem; }
+    main > section:first-of-type fieldset:nth-of-type(3) span { min-width: 2.7rem; padding-inline: .5rem; }
+    main > section:nth-of-type(2) > ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    main > section:nth-of-type(3) > ul { grid-template-columns: minmax(0, 1fr); }
+    main > section:nth-of-type(4) th,
+    main > section:nth-of-type(4) td { padding: .75rem .8rem; }
+    main > section:nth-of-type(4) td { white-space: normal; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html"><b aria-hidden="true">ch</b>Chaket</a>
+  <nav aria-label="Principal" id="menu">
+    <ul>
+      <li><a href="index.html#inicio">Inicio</a></li>
+      <li><a href="index.html#coleccion">Colección</a></li>
+      <li><a href="coleccion-3d.html" aria-current="page">En 3D</a></li>
+      <li><a href="index.html#configurador">Configura</a></li>
+      <li><a href="#club">Club</a></li>
+    </ul>
+  </nav>
+  <button type="button" aria-haspopup="dialog" aria-label="Cesta: 0 productos">Cesta <b>0</b></button>
+  <button type="button" aria-label="Abrir el menú" aria-controls="menu" aria-expanded="false"></button>
+</header>
+
+<main>
+
+  <!-- 1. VISOR 3D: la chaqueta en grande y, al lado, color, vista, talla y compra -->
+  <section id="visor" aria-labelledby="titulo-visor">
+    <header>
+      <p>Colección 2026 · Chaket Plumón ligero</p>
+      <h1 id="titulo-visor">Plumón ligero, <em>en cinco colores</em></h1>
+      <p>La chaqueta de la tienda convertida en un objeto 3D: cuello alto, manga raglán, canales horizontales y bolsillos de cremallera oculta. Gírala, acércate, cambia el color y llévatela.</p>
+    </header>
+
+    <figure>
+      <canvas tabindex="0" role="img" aria-label="Chaqueta de plumón ligero en verde salvia, en 3D. Arrastra para girarla."></canvas>
+      <figcaption><strong>Verde salvia</strong><output>0°</output></figcaption>
+      <p>Arrastra para girar · rueda o pellizco para acercar</p>
+    </figure>
+
+    <form aria-label="Opciones del visor y compra">
+      <fieldset>
+        <legend>Color <output>Verde salvia</output></legend>
+        <label><input type="radio" name="color" value="salvia" checked><span>Salvia</span></label>
+        <label><input type="radio" name="color" value="cafe"><span>Café</span></label>
+        <label><input type="radio" name="color" value="marino"><span>Marino</span></label>
+        <label><input type="radio" name="color" value="negro"><span>Negro</span></label>
+        <label><input type="radio" name="color" value="rojo"><span>Rojo</span></label>
+      </fieldset>
+      <fieldset>
+        <legend>Mirar de cerca</legend>
+        <label><input type="radio" name="vista" value="frente" checked><span>Frente</span></label>
+        <label><input type="radio" name="vista" value="espalda"><span>Espalda</span></label>
+        <label><input type="radio" name="vista" value="perfil"><span>Perfil</span></label>
+        <label><input type="radio" name="vista" value="cuello"><span>Cuello</span></label>
+        <label><input type="radio" name="vista" value="bolsillo"><span>Bolsillo</span></label>
+        <label><input type="radio" name="vista" value="puno"><span>Puño</span></label>
+      </fieldset>
+      <output aria-live="polite">Cuello alto, cremallera de espiral hasta arriba y nueve canales horizontales.</output>
+      <fieldset>
+        <legend>Talla <output>M · en stock</output></legend>
+        <label><input type="radio" name="talla" value="XS"><span>XS</span></label>
+        <label><input type="radio" name="talla" value="S"><span>S</span></label>
+        <label><input type="radio" name="talla" value="M" checked><span>M</span></label>
+        <label><input type="radio" name="talla" value="L"><span>L</span></label>
+        <label><input type="radio" name="talla" value="XL"><span>XL</span></label>
+        <label><input type="radio" name="talla" value="XXL"><span>XXL</span></label>
+      </fieldset>
+      <p><button type="submit">Añadir a la cesta · <data value="89">89 €</data></button><button type="button" aria-pressed="true">Girar sola</button><a href="producto.html?p=plumon-ligero&amp;c=salvia">Ver la ficha</a></p>
+      <ul aria-label="El modelo en cifras">
+        <li><strong>113 mil</strong>vértices en tiempo real</li>
+        <li><strong>650</strong>dientes de la cremallera</li>
+        <li><strong>5</strong>colores, un solo diseño</li>
+      </ul>
+    </form>
+  </section>
+
+  <!-- 2. LOS CINCO COLORES: foto de grupo y una foto de estudio de cada color -->
+  <section id="colores" aria-labelledby="titulo-colores">
+    <header>
+      <p>La colección</p>
+      <h2 id="titulo-colores">Un diseño, <em>cinco colores</em></h2>
+      <p>Verde salvia, café, azul marino, negro y el rojo de Chaket. Toca uno para verlo en el visor.</p>
+    </header>
+    <figure>
+      <img src="img/coleccion/coleccion.webp" alt="Las cinco chaquetas de plumón ligero en fila: negro, café, verde salvia, azul marino y rojo" width="1800" height="900" loading="lazy">
+      <figcaption>Foto de estudio con las cinco chaquetas</figcaption>
+    </figure>
+    <ul aria-label="Colores">
+      <li><a href="#visor" data-color="salvia"><figure><img src="img/coleccion/salvia-tres-cuartos.webp" alt="Chaqueta en verde salvia, de tres cuartos" width="800" height="1000" loading="lazy"><figcaption>Verde salvia <small>#9C9782</small></figcaption></figure></a></li>
+      <li><a href="#visor" data-color="cafe"><figure><img src="img/coleccion/cafe-tres-cuartos.webp" alt="Chaqueta en café, de tres cuartos" width="800" height="1000" loading="lazy"><figcaption>Café <small>#35281F</small></figcaption></figure></a></li>
+      <li><a href="#visor" data-color="marino"><figure><img src="img/coleccion/marino-tres-cuartos.webp" alt="Chaqueta en azul marino, de tres cuartos" width="800" height="1000" loading="lazy"><figcaption>Azul marino <small>#1F2B42</small></figcaption></figure></a></li>
+      <li><a href="#visor" data-color="negro"><figure><img src="img/coleccion/negro-tres-cuartos.webp" alt="Chaqueta en negro, de tres cuartos" width="800" height="1000" loading="lazy"><figcaption>Negro <small>#1E1F22</small></figcaption></figure></a></li>
+      <li><a href="#visor" data-color="rojo"><figure><img src="img/coleccion/rojo-tres-cuartos.webp" alt="Chaqueta en rojo, de tres cuartos" width="800" height="1000" loading="lazy"><figcaption>Rojo <small>#A3172F</small></figcaption></figure></a></li>
+    </ul>
+  </section>
+
+  <!-- 3. DETALLES DE CERCA -->
+  <section id="detalles" aria-labelledby="titulo-detalles">
+    <header>
+      <p>De cerca</p>
+      <h2 id="titulo-detalles">Hecha con <em>todos los detalles</em></h2>
+      <p>Cada pespunte, la espiral de la cremallera y el frunce de los elásticos están modelados, no pintados.</p>
+    </header>
+    <ul aria-label="Detalles">
+      <li><figure><img src="img/coleccion/detalle-cuello.webp" alt="Cuello alto con la cremallera, el garaje y la etiqueta interior" width="800" height="1000" loading="lazy"><figcaption><strong>Cuello y cremallera</strong>Cuello de 7 cm, cremallera de espiral hasta arriba con garaje y etiqueta tejida dentro.</figcaption></figure></li>
+      <li><figure><img src="img/coleccion/detalle-tirador.webp" alt="Deslizador metálico de la cremallera y su tirador con el monograma ch" width="800" height="1000" loading="lazy"><figcaption><strong>Tirador «ch»</strong>Deslizador metálico satinado y tirador con ranura y el monograma de la marca en relieve.</figcaption></figure></li>
+      <li><figure><img src="img/coleccion/detalle-bolsillo.webp" alt="Bolsillo de cremallera oculta con pespuntes" width="800" height="1000" loading="lazy"><figcaption><strong>Bolsillos ocultos</strong>Dos bolsillos de 17 cm con la cremallera escondida en la ranura y pespunte a cada lado.</figcaption></figure></li>
+      <li><figure><img src="img/coleccion/detalle-puno.webp" alt="Puño con ribete elástico fruncido" width="800" height="1000" loading="lazy"><figcaption><strong>Puño elástico</strong>Ribete elástico fruncido en puños y bajo: abriga sin apretar.</figcaption></figure></li>
+    </ul>
+  </section>
+
+  <!-- 4. MEDIDAS DE LA TALLA M -->
+  <section id="medidas" aria-labelledby="titulo-medidas">
+    <header>
+      <p>Ficha técnica</p>
+      <h2 id="titulo-medidas">Las medidas <em>de la talla M</em></h2>
+      <p>Medidas de la prenda cerrada y plana, comprobadas sobre el objeto 3D.</p>
+    </header>
+    <figure>
+      <img src="img/coleccion/ficha-medidas.webp" alt="Ficha de medidas: vistas de frente y espalda de la chaqueta con las cotas de la talla M" width="2300" height="1460" loading="lazy">
+    </figure>
+    <table>
+      <caption>Medidas de la prenda, talla M</caption>
+      <thead><tr><th scope="col">Medida</th><th scope="col">Talla M</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Largo de espalda (del cuello al bajo)</th><td>70 cm</td></tr>
+        <tr><th scope="row">Medio pecho (de axila a axila)</th><td>59,5 cm</td></tr>
+        <tr><th scope="row">Medio contorno de cintura</th><td>55 cm</td></tr>
+        <tr><th scope="row">Medio bajo (con el elástico)</th><td>54 cm</td></tr>
+        <tr><th scope="row">Largo de manga (del hombro al puño)</th><td>64 cm</td></tr>
+        <tr><th scope="row">Medio contorno del brazo</th><td>27,5 cm</td></tr>
+        <tr><th scope="row">Medio puño</th><td>19 cm</td></tr>
+        <tr><th scope="row">Alto del cuello</th><td>7 cm</td></tr>
+        <tr><th scope="row">Alto de cada canal (cuerpo / manga)</th><td>6,8 / 6 cm</td></tr>
+        <tr><th scope="row">Bolsillos de cremallera oculta</th><td>17 cm</td></tr>
+      </tbody>
+    </table>
+    <dl>
+      <dt>Corte</dt><dd>Recto y a la cadera, manga raglán (sin costura en el hombro), cuello alto.</dd>
+      <dt>Acolchado</dt><dd>Nueve canales horizontales delante y detrás; en las mangas, anillos de 6 cm. El canesú del hombro es liso.</dd>
+      <dt>Cierre</dt><dd>Cremallera de espiral hasta el canto del cuello, con garaje arriba, tope abajo y tirador metálico «ch».</dd>
+      <dt>Bolsillos</dt><dd>Dos bolsillos delanteros de cremallera oculta, casi verticales.</dd>
+      <dt>Acabados</dt><dd>Ribete elástico en bajo y puños, forro satinado del mismo tono, etiqueta tejida y colgador en el cuello.</dd>
+    </dl>
+    <p>Las demás tallas cambian unos 2 cm de pecho y 1,5 cm de largo por talla.</p>
+  </section>
+
+  <!-- 5. LOS MODELOS 3D PARA DESCARGAR -->
+  <section id="descargas" aria-labelledby="titulo-descargas">
+    <header>
+      <p>Modelos 3D</p>
+      <h2 id="titulo-descargas">Los cinco <em>archivos GLB</em></h2>
+      <p>Listos para la web (three.js, model-viewer), Blender o cualquier visor 3D. Cada uno pesa unos 5 MB y lleva sus texturas dentro.</p>
+    </header>
+    <ul aria-label="Descargas">
+      <li><a href="modelos/chaqueta-salvia.glb" download>Verde salvia <small>chaqueta-salvia.glb</small></a></li>
+      <li><a href="modelos/chaqueta-cafe.glb" download>Café <small>chaqueta-cafe.glb</small></a></li>
+      <li><a href="modelos/chaqueta-marino.glb" download>Azul marino <small>chaqueta-marino.glb</small></a></li>
+      <li><a href="modelos/chaqueta-negro.glb" download>Negro <small>chaqueta-negro.glb</small></a></li>
+      <li><a href="modelos/chaqueta-rojo.glb" download>Rojo <small>chaqueta-rojo.glb</small></a></li>
+    </ul>
+  </section>
+
+</main>
+
+<footer id="club">
+  <section aria-labelledby="titulo-club">
+    <h2 id="titulo-club">Ligera para llevar.<br>Cálida para <em>todo el invierno.</em></h2>
+    <p>Únete al Club Chaket: un 10 % en tu primera chaqueta, los colores nuevos antes que nadie y un aviso cuando vuelva tu talla.</p>
+    <form aria-label="Suscripción al Club Chaket" novalidate>
+      <input type="email" name="correo" placeholder="Tu correo electrónico" aria-label="Correo electrónico" autocomplete="email" required>
+      <button type="submit">Unirme al Club</button>
+    </form>
+    <output aria-live="polite"></output>
+  </section>
+  <section aria-label="Más de Chaket">
+    <header>
+      <a href="index.html"><b aria-hidden="true">ch</b>Chaket</a>
+      <p>Abrigo sin límites</p>
+      <ul aria-label="Redes sociales">
+        <li><a href="#" aria-label="Instagram"></a></li>
+        <li><a href="#" aria-label="TikTok"></a></li>
+        <li><a href="#" aria-label="YouTube"></a></li>
+        <li><a href="#" aria-label="Pinterest"></a></li>
+        <li><a href="#" aria-label="X"></a></li>
+      </ul>
+    </header>
+    <nav aria-label="Tienda">
+      <ul>
+        <li><a href="index.html#coleccion">Colección</a></li>
+        <li><a href="index.html#configurador">Configura la tuya</a></li>
+        <li><a href="coleccion-3d.html">Colección en 3D</a><small>Nuevo</small></li>
+        <li><a href="producto.html">Ficha en 360°</a></li>
+        <li><a href="index.html#oferta">Oferta de la semana</a><small>-20 %</small></li>
+        <li><a href="pago.html">Pago seguro</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Ayuda">
+      <ul>
+        <li><a href="#">Envíos y entregas</a></li>
+        <li><a href="#">Cambios y devoluciones</a></li>
+        <li><a href="#">Guía de tallas</a></li>
+        <li><a href="#">Cuidado de la chaqueta</a></li>
+        <li><a href="#">Contacto</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="La marca">
+      <ul>
+        <li><a href="#">Nuestra historia</a></li>
+        <li><a href="#">Trabaja con nosotros</a><small>Contratamos</small></li>
+        <li><a href="#">Tienda de Gran Vía 26</a></li>
+        <li><a href="#club">Club Chaket</a><small>-10 %</small></li>
+        <li><a href="#">Colores nuevos</a><small>Noviembre 2026</small></li>
+      </ul>
+    </nav>
+    <p><small><a href="#">Aviso legal</a> | <a href="#">Privacidad</a> | <a href="#">Cookies</a> | <a href="#">Condiciones de compra</a></small><small>© 2026 Chaket | Todos los derechos reservados · Plantilla premium de All Pixels</small></p>
+  </section>
+</footer>
+
+<dialog aria-labelledby="titulo-cesta">
+  <header>
+    <h2 id="titulo-cesta">Tu cesta</h2>
+    <button type="button" aria-label="Cerrar la cesta">&#x2715;</button>
+  </header>
+  <p>Envío gratis a partir de 100 €</p>
+  <progress max="100" value="0" aria-label="Camino al envío gratis"></progress>
+  <ul aria-label="Productos en la cesta"></ul>
+  <footer>
+    <dl>
+      <dt>Subtotal</dt><dd>0 €</dd>
+      <dt>Envío</dt><dd>—</dd>
+    </dl>
+    <a href="pago.html">Finalizar compra</a>
+    <button type="button">Seguir comprando</button>
+  </footer>
+</dialog>
+
+<aside aria-live="polite" aria-label="Aviso de la cesta">
+  <figure><img src="img/chaquetas/rojo.webp" alt="" width="1000" height="1000"></figure>
+  <p><strong>Añadida a la cesta</strong><small>Chaket Plumón ligero</small></p>
+  <button type="button">Ver cesta</button>
+</aside>
+
+<script src="js/three.min.js"></script>
+<script src="js/GLTFLoader.js"></script>
+<script src="js/RoomEnvironment.js"></script>
+<script src="js/meshopt-decoder.js"></script>
+<script src="js/catalogo.js"></script>
+<script src="js/chaket-3d.js"></script>
+<script src="js/tienda.js"></script>
+<script src="js/modelo.js"></script>
+<script src="js/coleccion-3d.js"></script>
+</body>
+</html>

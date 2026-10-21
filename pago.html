@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+  Chaket · plantilla premium de All Pixels (allpixels.dev)
+  Pago: pago exprés, tres pasos en acordeón, tarjeta en 3D que se gira, resumen oscuro con la chaqueta en 3D y recibo final.
+  HTML semántico sin clases ni divs; todo el CSS va en <style>.
+-->
+<title>Finalizar compra — Chaket</title>
+<meta name="description" content="Paga tu pedido de Chaket en tres pasos: contacto, envío y pago con tarjeta, Bizum, PayPal o transferencia.">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" type="image/png" href="img/icono.png">
+<style>
+  /* ============ 1. PALETA ============ */
+  :root {
+    --blanco: #FFFFFF;
+    --tinta: #111114;        /* negro de la marca */
+    --texto: #3B3B42;
+    --suave: #63636C;
+    --hueso: #F6F5F2;        /* blanco roto para fondos */
+    --gris: #F2F2F4;
+    --gris-2: #E5E5E9;
+    --linea: rgba(17, 17, 20, .1);
+    --rojo: #C8102E;         /* el rojo de la chaqueta estrella */
+    --rojo-oscuro: #A50F23;
+    --noche: #120304;        /* negro con un punto de vino, para el pie y las bandas oscuras */
+    --display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+    --sans: "Manrope", -apple-system, "Segoe UI", Arial, sans-serif;
+    --curva: cubic-bezier(.2, .7, .2, 1);
+    --ancho: 1320px;
+    --margen: clamp(1rem, 4vw, 3rem);
+    --sombra: 0 30px 60px -30px rgba(17, 17, 20, .35);
+    --sombra-suave: 0 16px 36px -20px rgba(17, 17, 20, .28);
+  }
+
+  /* ============ 2. BASE ============ */
+  a {
+    text-decoration: none;
+    color: var(--tinta);
+    transition: color .3s ease, background .3s ease, border-color .3s ease, transform .4s var(--curva);
+  }
+  a:hover { color: var(--rojo); }
+
+  @font-face { font-family: "Bodoni Moda"; src: url("fonts/bodoni-moda-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+  @font-face { font-family: "Bodoni Moda"; src: url("fonts/bodoni-moda-latin-500-italic.woff2") format("woff2"); font-weight: 500; font-style: italic; font-display: swap; }
+  @font-face { font-family: "Bodoni Moda"; src: url("fonts/bodoni-moda-latin-600-normal.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+  @font-face { font-family: "Bodoni Moda"; src: url("fonts/bodoni-moda-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+  @font-face { font-family: "Manrope"; src: url("fonts/manrope-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Manrope"; src: url("fonts/manrope-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+  @font-face { font-family: "Manrope"; src: url("fonts/manrope-latin-600-normal.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+  @font-face { font-family: "Manrope"; src: url("fonts/manrope-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+  body {
+    font-family: var(--sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--texto);
+    background: var(--blanco);
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+  }
+  [hidden] { display: none !important; }
+  ul, ol, menu { list-style: none; }
+  figure { position: relative; }
+  img { display: block; width: 100%; height: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 600; color: var(--tinta); line-height: 1.02; letter-spacing: -.02em; text-wrap: balance; }
+  h1 em, h2 em, h3 em { font-style: italic; font-weight: 500; color: var(--rojo); }
+  h2 { font-size: clamp(2.2rem, 5vw, 4.2rem); }
+  p { text-wrap: pretty; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; border: 0; background: none; }
+  :focus-visible { outline: 2px solid var(--rojo); outline-offset: 3px; }
+  ::selection { background: var(--rojo); color: var(--blanco); }
+
+  /* Rótulo pequeño con punto rojo: «Colección 2026» */
+  main > section > header > p:first-of-type {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    font-size: .74rem;
+    font-weight: 700;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--suave);
+  }
+  main > section > header > p:first-of-type::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--rojo);
+    box-shadow: 0 0 0 4px rgba(200, 16, 46, .14);
+  }
+
+  /* ============ 3. CABECERA ============ */
+  body > header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem var(--margen);
+    transition: background .4s ease, padding .4s var(--curva), box-shadow .4s ease;
+  }
+  body > header[data-scroll] {
+    padding-block: .6rem;
+    background: rgba(255, 255, 255, .84);
+    backdrop-filter: blur(18px) saturate(1.4);
+    box-shadow: 0 1px 0 var(--linea);
+  }
+  /* Logotipo: «ch» en un círculo + el nombre en Bodoni */
+  body > header > a:first-of-type {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    width: fit-content;
+    font-family: var(--display);
+    font-size: 1.55rem;
+    font-weight: 700;
+    letter-spacing: -.03em;
+  }
+  body > header > a:first-of-type b {
+    display: grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border: 1.5px solid var(--tinta);
+    border-radius: 50%;
+    font-family: var(--display);
+    font-size: .9rem;
+    font-style: italic;
+    font-weight: 500;
+    transition: background .3s ease, color .3s ease, rotate .6s var(--curva);
+  }
+  body > header > a:first-of-type:hover { color: var(--tinta); }
+  body > header > a:first-of-type:hover b { background: var(--tinta); color: var(--blanco); rotate: -12deg; }
+  body > header nav ul { display: flex; gap: .2rem; padding: .3rem; border-radius: 40px; background: rgba(255, 255, 255, .72); box-shadow: inset 0 0 0 1px var(--linea); }
+  body > header nav a { display: block; padding: .5rem 1.05rem; border-radius: 40px; font-size: .9rem; font-weight: 600; color: var(--texto); }
+  body > header nav a:hover { background: var(--gris); color: var(--tinta); }
+  body > header nav a[aria-current] { background: var(--tinta); color: var(--blanco); }
+  /* Botón de la cesta: bolsa dibujada con CSS y número de productos */
+  body > header > button:first-of-type {
+    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .5rem .55rem .5rem 1rem;
+    border-radius: 40px;
+    border: 1.5px solid var(--tinta);
+    background: var(--blanco);
+    font-size: .9rem;
+    font-weight: 700;
+    color: var(--tinta);
+    transition: background .3s ease, color .3s ease;
+  }
+  body > header > button:first-of-type::before {
+    content: "";
+    width: 15px;
+    height: 13px;
+    margin-top: 4px;
+    border: 2px solid currentColor;
+    border-radius: 3px 3px 5px 5px;
+    background: radial-gradient(circle at 50% -2px, transparent 4px, currentColor 4.5px, currentColor 6px, transparent 6.5px) 0 -7px / 100% 12px no-repeat;
+  }
+  body > header > button:first-of-type b {
+    display: grid;
+    place-items: center;
+    min-width: 1.65rem;
+    height: 1.65rem;
+    padding: 0 .4rem;
+    border-radius: 20px;
+    background: var(--rojo);
+    font-size: .78rem;
+    color: var(--blanco);
+  }
+  body > header > button:first-of-type[data-salto] b { animation: salto .6s var(--curva); }
+  body > header > button:first-of-type:hover { background: var(--tinta); color: var(--blanco); }
+  body > header > button:nth-of-type(2) {
+    display: none;
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--linea);
+    background: var(--blanco);
+  }
+  body > header > button:nth-of-type(2)::before,
+  body > header > button:nth-of-type(2)::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 18px;
+    height: 2px;
+    margin: -1px 0 0 -9px;
+    border-radius: 2px;
+    background: var(--tinta);
+    transition: transform .4s var(--curva);
+  }
+  body > header > button:nth-of-type(2)::before { transform: translateY(-4px); }
+  body > header > button:nth-of-type(2)::after { transform: translateY(4px); }
+  body > header > button:nth-of-type(2)[aria-expanded="true"]::before { transform: rotate(45deg); }
+  body > header > button:nth-of-type(2)[aria-expanded="true"]::after { transform: rotate(-45deg); }
+
+  /* ============ 4. PANEL DE LA CESTA ============ */
+  body > dialog {
+    width: min(460px, 100%);
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0 0 0 auto;
+    padding: 0;
+    border: 0;
+    background: var(--blanco);
+    color: var(--texto);
+  }
+  body > dialog[open] { display: grid; grid-template-rows: auto auto auto minmax(0, 1fr) auto; animation: panel .5s var(--curva); }
+  body > dialog::backdrop { background: rgba(17, 17, 20, .38); backdrop-filter: blur(4px); animation: aparecer .4s ease; }
+  body > dialog > header { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 1.6rem 1rem; }
+  body > dialog h2 { font-size: 2rem; }
+  body > dialog > header button { width: 42px; height: 42px; border-radius: 50%; background: var(--gris); transition: background .3s ease, color .3s ease, rotate .4s var(--curva); }
+  body > dialog > header button:hover { background: var(--tinta); color: var(--blanco); rotate: 90deg; }
+  body > dialog > p { padding: 0 1.6rem; font-size: .88rem; font-weight: 600; color: var(--tinta); }
+  body > dialog > progress { width: calc(100% - 3.2rem); height: 6px; margin: .6rem 1.6rem 1.2rem; border: 0; border-radius: 6px; background: var(--gris-2); overflow: hidden; appearance: none; }
+  body > dialog > progress::-webkit-progress-bar { background: var(--gris-2); }
+  body > dialog > progress::-webkit-progress-value { background: var(--rojo); border-radius: 6px; transition: width .5s var(--curva); }
+  body > dialog > progress::-moz-progress-bar { background: var(--rojo); border-radius: 6px; }
+  body > dialog > ul { display: grid; align-content: start; gap: .8rem; padding: 0 1.6rem 1rem; overflow-y: auto; }
+  body > dialog > ul li {
+    display: grid;
+    grid-template-columns: 84px minmax(0, 1fr) auto;
+    grid-template-areas: "foto texto importe" "foto cantidad quitar";
+    align-items: center;
+    gap: .4rem .9rem;
+    padding: .7rem;
+    border-radius: 20px;
+    background: var(--hueso);
+  }
+  body > dialog > ul li:only-child:not(:has(figure)) { display: block; padding: 2rem 1.4rem; text-align: center; color: var(--suave); }
+  body > dialog > ul li figure { grid-area: foto; aspect-ratio: 1; border-radius: 14px; background: var(--blanco); }
+  body > dialog > ul li figure img { height: 100%; object-fit: contain; padding: .3rem; }
+  body > dialog > ul li p:first-of-type { grid-area: texto; display: grid; line-height: 1.35; }
+  body > dialog > ul li p:first-of-type a { font-weight: 700; }
+  body > dialog > ul li p:first-of-type small { font-size: .82rem; color: var(--suave); }
+  body > dialog > ul li p:last-of-type { grid-area: cantidad; display: inline-flex; align-items: center; width: fit-content; border-radius: 30px; background: var(--blanco); box-shadow: inset 0 0 0 1px var(--linea); }
+  body > dialog > ul li p:last-of-type button { width: 32px; height: 32px; border-radius: 50%; font-size: 1.05rem; transition: background .25s ease; }
+  body > dialog > ul li p:last-of-type button:hover { background: var(--gris); }
+  body > dialog > ul li p:last-of-type output { min-width: 1.6rem; text-align: center; font-weight: 700; }
+  body > dialog > ul li b { grid-area: importe; font-weight: 700; color: var(--tinta); }
+  body > dialog > ul li > button { grid-area: quitar; justify-self: end; font-size: .82rem; font-weight: 600; color: var(--suave); text-decoration: underline; text-underline-offset: 3px; }
+  body > dialog > ul li > button:hover { color: var(--rojo); }
+  body > dialog > footer { display: grid; gap: .8rem; padding: 1.2rem 1.6rem 1.6rem; border-top: 1px solid var(--linea); }
+  body > dialog dl { display: grid; grid-template-columns: 1fr auto; gap: .35rem; font-size: .95rem; }
+  body > dialog dl dd { text-align: right; font-weight: 700; color: var(--tinta); }
+  body > dialog dl dd:first-of-type { font-family: var(--display); font-size: 1.35rem; }
+  body > dialog footer a { display: flex; justify-content: center; gap: .6rem; padding: 1.05rem; border-radius: 40px; background: var(--tinta); font-weight: 700; color: var(--blanco); }
+  body > dialog footer a::after { content: "\2192"; }
+  body > dialog footer a:hover { background: var(--rojo); color: var(--blanco); }
+  body > dialog footer a[aria-disabled] { opacity: .35; pointer-events: none; }
+  body > dialog footer button { padding: .6rem; font-weight: 600; color: var(--suave); }
+  body > dialog footer button:hover { color: var(--tinta); }
+
+  /* ============ 5. AVISO AL AÑADIR ============ */
+  body > aside {
+    position: fixed;
+    right: var(--margen);
+    bottom: var(--margen);
+    z-index: 60;
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: .9rem;
+    width: min(420px, calc(100% - 2rem));
+    padding: .7rem .7rem .7rem .7rem;
+    border-radius: 22px;
+    background: var(--tinta);
+    box-shadow: var(--sombra);
+    color: rgba(255, 255, 255, .78);
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 20px;
+    transition: opacity .35s ease, translate .5s var(--curva), visibility 0s .5s;
+  }
+  body > aside[data-visible] { opacity: 1; visibility: visible; translate: 0 0; transition: opacity .35s ease, translate .5s var(--curva); }
+  body > aside figure { aspect-ratio: 1; border-radius: 14px; background: var(--blanco); }
+  body > aside figure img { height: 100%; object-fit: contain; padding: .25rem; }
+  body > aside p { display: grid; font-size: .85rem; line-height: 1.35; }
+  body > aside strong { color: var(--blanco); }
+  body > aside button { padding: .7rem 1rem; border-radius: 30px; background: var(--blanco); font-size: .85rem; font-weight: 700; color: var(--tinta); transition: background .3s ease, color .3s ease; }
+  body > aside button:hover { background: var(--rojo); color: var(--blanco); }
+
+  /* ============ 6. PIE: el Club sobre un horizonte rojo y una tarjeta con los enlaces ============ */
+  body > footer {
+    --horizonte: 50%;
+    position: relative;
+    display: grid;
+    justify-items: center;
+    padding: clamp(5rem, 10vw, 8.5rem) var(--margen) 0;
+    overflow: hidden;
+    isolation: isolate;
+    background:
+      radial-gradient(42% 7% at 50% var(--horizonte), rgba(255, 150, 140, .5), transparent 80%),
+      radial-gradient(70% 16% at 50% var(--horizonte), rgba(240, 40, 60, .85), transparent 78%),
+      radial-gradient(95% 28% at 50% var(--horizonte), rgba(170, 14, 36, .9), transparent 80%),
+      radial-gradient(130% 45% at 50% var(--horizonte), rgba(90, 8, 20, .9), transparent 82%),
+      var(--noche);
+    color: rgba(255, 255, 255, .74);
+  }
+  /* Estrellas que titilan sobre el horizonte */
+  body > footer::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 40%;
+    z-index: -1;
+    background:
+      radial-gradient(1.5px 1.5px at 8% 22%, #FFFFFF, transparent),
+      radial-gradient(1px 1px at 17% 61%, #FFFFFF, transparent),
+      radial-gradient(1.5px 1.5px at 26% 38%, rgba(255, 255, 255, .8), transparent),
+      radial-gradient(1px 1px at 33% 78%, #FFFFFF, transparent),
+      radial-gradient(2px 2px at 41% 12%, rgba(255, 255, 255, .7), transparent),
+      radial-gradient(1px 1px at 47% 70%, #FFFFFF, transparent),
+      radial-gradient(1.5px 1.5px at 58% 84%, #FFFFFF, transparent),
+      radial-gradient(1px 1px at 64% 30%, rgba(255, 255, 255, .8), transparent),
+      radial-gradient(2px 2px at 72% 66%, #FFFFFF, transparent),
+      radial-gradient(1px 1px at 79% 18%, #FFFFFF, transparent),
+      radial-gradient(1.5px 1.5px at 86% 52%, rgba(255, 255, 255, .8), transparent),
+      radial-gradient(1px 1px at 93% 80%, #FFFFFF, transparent);
+    animation: titilar 5s ease-in-out infinite alternate;
+  }
+  /* Destellos en forma de cruz, como en el cielo del horizonte */
+  body > footer::after {
+    content: "\2726       \2726                    \2726            \2726";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(var(--horizonte) - 9rem);
+    z-index: -1;
+    font-size: .7rem;
+    letter-spacing: .4rem;
+    text-align: center;
+    white-space: pre;
+    color: rgba(255, 210, 210, .55);
+    animation: titilar 3.4s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes titilar { from { opacity: .45; } to { opacity: 1; } }
+
+  /* El Club: título en dos líneas, texto y correo */
+  body > footer > section:first-of-type { display: grid; justify-items: center; gap: 1.2rem; max-width: 980px; text-align: center; }
+  body > footer h2 { font-size: clamp(2.4rem, 5.2vw, 4.6rem); line-height: 1.02; color: var(--blanco); }
+  body > footer h2 em { color: #FF8A9A; }
+  body > footer > section:first-of-type > p { max-width: 540px; font-size: 1.05rem; }
+  body > footer form { display: flex; gap: .4rem; width: min(470px, 100%); margin-top: .6rem; padding: .35rem; border-radius: 40px; background: rgba(255, 255, 255, .09); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18); backdrop-filter: blur(10px); }
+  body > footer input { flex: 1; min-width: 0; padding: 0 1.1rem; border: 0; outline: 0; background: transparent; color: var(--blanco); }
+  body > footer input::placeholder { color: rgba(255, 255, 255, .62); }
+  body > footer form button { padding: .85rem 1.4rem; border-radius: 40px; background: linear-gradient(180deg, #F0334B, var(--rojo)); box-shadow: 0 10px 30px -8px rgba(240, 51, 75, .8); font-weight: 700; color: var(--blanco); transition: background .3s ease, color .3s ease, transform .4s var(--curva); }
+  body > footer form button:hover { background: var(--blanco); color: var(--tinta); transform: translateY(-2px); }
+  body > footer output { display: block; min-height: 1.4em; font-size: .9rem; color: #FFC2CA; }
+
+  /* La tarjeta: marca y redes a la izquierda, tres columnas de enlaces */
+  body > footer > section:last-of-type {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr));
+    gap: 2rem 2.4rem;
+    width: min(1120px, 100%);
+    margin-top: clamp(5rem, 9vw, 7.5rem);
+    padding: 2.6rem clamp(1.4rem, 3vw, 2.8rem) 0;
+    border-radius: 28px 28px 0 0;
+    background: linear-gradient(180deg, rgba(40, 6, 10, .72), rgba(16, 3, 5, .94) 60%);
+    backdrop-filter: blur(18px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), inset 0 0 0 1px rgba(255, 255, 255, .06);
+  }
+  body > footer > section:last-of-type > header { display: grid; align-content: start; gap: .9rem; }
+  body > footer > section:last-of-type > header > a {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    width: fit-content;
+    font-family: var(--display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    color: var(--blanco);
+  }
+  body > footer > section:last-of-type > header > a b {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1.5px solid #FF5C6F;
+    border-radius: 50%;
+    font-size: .85rem;
+    font-style: italic;
+    font-weight: 500;
+    color: #FF5C6F;
+  }
+  body > footer > section:last-of-type > header > p { font-weight: 700; color: var(--blanco); }
+  /* Redes: iconos dibujados con CSS */
+  body > footer > section:last-of-type > header ul { display: flex; gap: .55rem; margin-top: .2rem; }
+  body > footer > section:last-of-type > header ul a {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .07);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12);
+    font-family: var(--display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, .85);
+    transition: background .3s ease, color .3s ease, transform .4s var(--curva);
+  }
+  body > footer > section:last-of-type > header ul a:hover { background: var(--rojo); color: var(--blanco); transform: translateY(-3px); }
+  body > footer > section:last-of-type > header ul li:nth-of-type(1) a::before { content: ""; width: 16px; height: 16px; border: 2px solid currentColor; border-radius: 5px; background: radial-gradient(circle, transparent 3px, currentColor 3.5px, currentColor 5px, transparent 5.5px); }
+  body > footer > section:last-of-type > header ul li:nth-of-type(1) a::after { content: ""; position: absolute; left: 22px; top: 13px; width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
+  body > footer > section:last-of-type > header ul li:nth-of-type(2) a::before { content: "\266A"; font-family: var(--sans); font-size: 1.15rem; }
+  body > footer > section:last-of-type > header ul li:nth-of-type(3) a::before { content: ""; width: 20px; height: 14px; border-radius: 4px; background: currentColor; }
+  body > footer > section:last-of-type > header ul li:nth-of-type(3) a::after { content: ""; position: absolute; left: 17px; top: 15px; border: 4px solid transparent; border-left: 6px solid var(--noche); border-right: 0; }
+  body > footer > section:last-of-type > header ul li:nth-of-type(3) a:hover::after { border-left-color: var(--rojo); }
+  body > footer > section:last-of-type > header ul li:nth-of-type(4) a::before { content: "P"; font-style: italic; }
+  body > footer > section:last-of-type > header ul li:nth-of-type(5) a::before { content: "X"; font-family: var(--sans); font-size: .95rem; }
+  /* Columnas de enlaces con etiquetas */
+  body > footer > section:last-of-type > nav ul { display: grid; gap: .55rem; }
+  body > footer > section:last-of-type > nav li { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .55rem; }
+  body > footer > section:last-of-type > nav a { font-size: .92rem; color: rgba(255, 255, 255, .78); }
+  body > footer > section:last-of-type > nav a:hover { color: var(--blanco); }
+  body > footer > section:last-of-type > nav small { padding: .12rem .55rem; border-radius: 20px; background: rgba(255, 92, 111, .18); box-shadow: inset 0 0 0 1px rgba(255, 92, 111, .4); font-size: .7rem; font-weight: 700; color: #FFC2CA; }
+  /* Abajo: legales separados por barras y derechos */
+  body > footer > section:last-of-type > p {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: .8rem 2rem;
+    margin-top: 1.2rem;
+    padding: 1.5rem 0 1.8rem;
+    border-top: 1px solid rgba(255, 255, 255, .12);
+    font-size: .84rem;
+  }
+  body > footer > section:last-of-type > p a { font-weight: 600; color: rgba(255, 255, 255, .85); }
+  body > footer > section:last-of-type > p a:hover { color: var(--blanco); }
+  body > footer > section:last-of-type > p small { font-size: inherit; }
+
+  /* ============ 7. ANIMACIONES ============ */
+  @keyframes subir { from { opacity: 0; translate: 0 30px; } }
+  @keyframes aparecer { from { opacity: 0; } }
+  @keyframes panel { from { translate: 100% 0; } }
+  @keyframes salto { 40% { scale: 1.45; } }
+  @keyframes flotar { 50% { translate: 0 -12px; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+
+  /* ============ 8. CABECERA Y PIE EN EL MÓVIL ============ */
+  @media (max-width: 1000px) {
+    body > footer { --horizonte: 38%; }
+    body > footer > section:last-of-type { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    body > footer > section:last-of-type > header { grid-column: 1 / -1; }
+  }
+  @media (max-width: 640px) {
+    body > footer { --horizonte: 30%; }
+    body > footer > section:last-of-type { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    body > footer > section:last-of-type > p { flex-direction: column; }
+  }
+  @media (max-width: 680px) {
+    body > header { grid-template-columns: 1fr auto auto; gap: .5rem; }
+    body > header > button:nth-of-type(2) { display: block; }
+    body > header > button:first-of-type { padding-left: .8rem; font-size: 0; gap: .45rem; }
+    body > header > button:first-of-type b { font-size: .78rem; }
+    body > header nav {
+      position: absolute;
+      top: calc(100% + .4rem);
+      left: 1rem;
+      right: 1rem;
+      padding: .5rem;
+      border-radius: 24px;
+      background: var(--blanco);
+      box-shadow: var(--sombra);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity .3s ease, transform .4s var(--curva), visibility 0s .4s;
+    }
+    body > header[data-menu] nav { opacity: 1; visibility: visible; transform: none; transition: opacity .3s ease, transform .4s var(--curva); }
+    body > header nav ul { flex-direction: column; background: none; box-shadow: none; }
+    body > header nav a { padding: .95rem 1.1rem; font-size: 1.15rem; border-radius: 18px; }
+    body > aside { right: 1rem; bottom: 1rem; }
+  }
+
+  /* ============ 9. PAGO: cabecera mínima ============ */
+  body > header { position: absolute; grid-template-columns: auto auto 1fr; gap: 1.2rem; padding-block: 1.3rem; }
+  body > header > p {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    padding: .45rem .95rem;
+    border-radius: 30px;
+    background: var(--blanco);
+    box-shadow: inset 0 0 0 1px var(--linea);
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--tinta);
+  }
+  /* candado dibujado con CSS */
+  body > header > p::before {
+    content: "";
+    width: 11px;
+    height: 9px;
+    margin-top: 5px;
+    border-radius: 2px;
+    background: #1E9E57;
+    box-shadow: 0 -5px 0 -1px var(--blanco), 0 -5px 0 0 #1E9E57;
+  }
+  body > header > a:last-of-type {
+    justify-self: end;
+    padding: .6rem 1.1rem;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, .1);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25);
+    font-size: .88rem;
+    font-weight: 700;
+    color: var(--blanco);
+  }
+  body > header > a:last-of-type::before { content: "\2190  "; }
+  body > header > a:last-of-type:hover { background: var(--blanco); color: var(--tinta); }
+  /* sin el resumen oscuro (recibo o cesta vacía) el enlace va sobre fondo claro */
+  body:has(main > aside[hidden]) > header > a:last-of-type { background: var(--blanco); box-shadow: inset 0 0 0 1px var(--linea); color: var(--tinta); }
+  body:has(main > aside[hidden]) > header > a:last-of-type:hover { background: var(--tinta); color: var(--blanco); }
+
+  /* ============ 10. DOS MITADES: formulario claro y resumen oscuro ============ */
+  main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(380px, .78fr); min-height: 100svh; }
+  main > section:first-of-type {
+    padding: 7.4rem clamp(1.2rem, 5vw, 5rem) 5rem max(var(--margen), calc((100vw - var(--ancho)) / 2));
+    background: var(--hueso);
+  }
+  main > section:first-of-type > * { max-width: 680px; }
+
+  /* Cabecera: título y pasos */
+  main > section:first-of-type > header > p:first-of-type { margin-bottom: .9rem; }
+  main > section:first-of-type h1 { font-size: clamp(2.8rem, 5.4vw, 5rem); line-height: .95; }
+  main > section:first-of-type > header ol {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .5rem;
+    margin: 2.2rem 0 2rem;
+    counter-reset: paso;
+  }
+  main > section:first-of-type > header li {
+    position: relative;
+    padding-top: 1rem;
+    font-size: .86rem;
+    font-weight: 700;
+    color: var(--suave);
+    counter-increment: paso;
+    transition: color .4s ease;
+  }
+  main > section:first-of-type > header li::before { content: "0" counter(paso) "  "; font-family: var(--display); font-style: italic; font-weight: 500; }
+  /* la barra de cada paso se llena cuando llegas */
+  main > section:first-of-type > header li::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 4px;
+    border-radius: 4px;
+    background: linear-gradient(var(--rojo), var(--rojo)) 0 0 / 0 100% no-repeat, var(--gris-2);
+    transition: background-size .8s var(--curva);
+  }
+  main > section:first-of-type > header li[aria-current] { color: var(--tinta); }
+  main > section:first-of-type > header li[aria-current]::after { background-size: 50% 100%, auto; }
+  main > section:first-of-type > header li[data-hecho] { color: var(--tinta); }
+  main > section:first-of-type > header li[data-hecho]::after { background-size: 100% 100%, auto; }
+
+  /* Pago exprés */
+  main > section:first-of-type > section { display: grid; gap: .8rem; margin-bottom: 1.6rem; }
+  main > section:first-of-type > section h2 { font-family: var(--sans); font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--suave); }
+  main > section:first-of-type > section > p:first-of-type { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .55rem; }
+  main > section:first-of-type > section button {
+    height: 54px;
+    border-radius: 14px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    transition: transform .4s var(--curva), box-shadow .3s ease, filter .3s ease;
+  }
+  main > section:first-of-type > section button:hover { transform: translateY(-2px); box-shadow: var(--sombra-suave); }
+  main > section:first-of-type > section button:nth-of-type(1) { background: #000000; color: var(--blanco); }
+  main > section:first-of-type > section button:nth-of-type(2) { background: var(--blanco); box-shadow: inset 0 0 0 1.5px var(--tinta); color: var(--tinta); }
+  main > section:first-of-type > section button:nth-of-type(2):hover { box-shadow: inset 0 0 0 1.5px var(--tinta), var(--sombra-suave); }
+  main > section:first-of-type > section button:nth-of-type(3) { background: #FFC439; font-style: italic; color: #002A6B; }
+  main > section:first-of-type > section button[aria-busy="true"] { filter: saturate(.4); cursor: progress; }
+  main > section:first-of-type > section > p:last-of-type {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: .6rem;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--suave);
+  }
+  main > section:first-of-type > section > p:last-of-type::before,
+  main > section:first-of-type > section > p:last-of-type::after { content: ""; flex: 1; height: 1px; background: var(--linea); }
+
+  /* ============ 11. LOS TRES PASOS (acordeón) ============ */
+  main > section:first-of-type > form { display: grid; gap: .9rem; }
+  main > section:first-of-type > form > fieldset {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    padding: 1.4rem 1.6rem 1.6rem;
+    border: 0;
+    border-radius: 26px;
+    background: var(--blanco);
+    box-shadow: 0 1px 0 rgba(17, 17, 20, .04), 0 20px 40px -32px rgba(17, 17, 20, .4);
+    transition: box-shadow .4s ease, opacity .4s ease;
+  }
+  main > section:first-of-type > form > fieldset[data-estado="activo"] { box-shadow: inset 0 0 0 2px var(--tinta), 0 30px 50px -36px rgba(17, 17, 20, .55); animation: subir .5s var(--curva); }
+  main > section:first-of-type > form > fieldset[data-estado="espera"] { opacity: .55; }
+
+  main > section:first-of-type > form > fieldset > legend {
+    float: left;
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    width: 100%;
+    font-family: var(--display);
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--tinta);
+  }
+  main > section:first-of-type > form > fieldset > legend b {
+    display: grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    background: var(--gris);
+    font-family: var(--sans);
+    font-size: .9rem;
+    font-weight: 700;
+    transition: background .3s ease, color .3s ease;
+  }
+  main > section:first-of-type > form > fieldset[data-estado="activo"] > legend b { background: var(--tinta); color: var(--blanco); }
+  main > section:first-of-type > form > fieldset[data-estado="hecho"] > legend b { background: #1E9E57; font-size: 0; color: var(--blanco); }
+  main > section:first-of-type > form > fieldset[data-estado="hecho"] > legend b::before { content: "\2713"; font-size: .95rem; }
+  /* resumen del paso hecho y botón «Cambiar» */
+  main > section:first-of-type > form > fieldset > output { grid-column: 1; font-size: .92rem; line-height: 1.45; color: var(--texto); }
+  main > section:first-of-type > form > fieldset[data-estado="hecho"] > button:first-of-type {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+    align-self: start;
+    padding: .45rem .9rem;
+    border-radius: 30px;
+    box-shadow: inset 0 0 0 1px var(--linea);
+    font-size: .84rem;
+    font-weight: 700;
+    color: var(--tinta);
+  }
+  main > section:first-of-type > form > fieldset[data-estado="hecho"] > button:first-of-type:hover { background: var(--tinta); color: var(--blanco); }
+
+  /* Campos */
+  main > section:first-of-type form label { display: grid; gap: .4rem; font-size: .82rem; font-weight: 700; color: var(--tinta); }
+  main > section:first-of-type form input:not([type="radio"], [type="checkbox"]),
+  main > section:first-of-type form select {
+    width: 100%;
+    height: 52px;
+    padding: 0 1rem;
+    border: 0;
+    border-radius: 14px;
+    background: var(--hueso);
+    box-shadow: inset 0 0 0 1.5px transparent;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: box-shadow .25s ease, background .25s ease;
+  }
+  main > section:first-of-type form input::placeholder { color: #8A8A93; }
+  main > section:first-of-type form input:not([type="radio"], [type="checkbox"]):focus,
+  main > section:first-of-type form select:focus { outline: 0; background: var(--blanco); box-shadow: inset 0 0 0 1.5px var(--tinta), 0 0 0 4px rgba(17, 17, 20, .08); }
+  main > section:first-of-type form input[aria-invalid="true"],
+  main > section:first-of-type form select[aria-invalid="true"] { background: #FFF2F3; box-shadow: inset 0 0 0 1.5px var(--rojo); }
+  main > section:first-of-type form label:has(input[name="direccion"]),
+  main > section:first-of-type form label:has(input[name="titular"]),
+  main > section:first-of-type form label:has(input[name="numero"]),
+  main > section:first-of-type form label:has(select),
+  main > section:first-of-type form label:has(input[type="checkbox"]),
+  main > section:first-of-type form > fieldset > fieldset,
+  main > section:first-of-type form > fieldset > button,
+  main > section:first-of-type form > fieldset > p { grid-column: 1 / -1; }
+  main > section:first-of-type form label:has(input[type="checkbox"]) {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: .7rem;
+    font-weight: 500;
+    color: var(--texto);
+    cursor: pointer;
+  }
+  main > section:first-of-type form input[type="checkbox"] { width: 20px; height: 20px; margin-top: 1px; accent-color: var(--tinta); }
+
+  /* Grupos de opciones: forma de envío y método de pago */
+  main > section:first-of-type form > fieldset > fieldset { display: grid; gap: .55rem; border: 0; }
+  main > section:first-of-type form > fieldset > fieldset > legend { float: left; width: 100%; margin-bottom: .2rem; font-size: .82rem; font-weight: 700; color: var(--tinta); }
+  main > section:first-of-type form > fieldset > fieldset:not([data-metodo], [data-empresa]) label {
+    position: relative;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: .1rem 1rem;
+    padding: 1rem 1.1rem;
+    border-radius: 16px;
+    background: var(--hueso);
+    box-shadow: inset 0 0 0 1.5px transparent;
+    font-weight: 500;
+    cursor: pointer;
+    transition: box-shadow .25s ease, background .25s ease;
+  }
+  main > section:first-of-type form > fieldset > fieldset:not([data-metodo], [data-empresa]) label:hover { box-shadow: inset 0 0 0 1.5px var(--gris-2); }
+  main > section:first-of-type form > fieldset > fieldset:not([data-metodo], [data-empresa]) label:has(input:checked) { background: var(--blanco); box-shadow: inset 0 0 0 2px var(--tinta); }
+  main > section:first-of-type form > fieldset > fieldset:not([data-metodo], [data-empresa]) label:has(input:focus-visible) { outline: 2px solid var(--rojo); outline-offset: 2px; }
+  main > section:first-of-type form input[type="radio"] {
+    grid-row: 1 / span 2;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px var(--suave);
+    appearance: none;
+    transition: box-shadow .25s ease;
+  }
+  main > section:first-of-type form input[type="radio"]:checked { box-shadow: inset 0 0 0 6px var(--tinta); }
+  main > section:first-of-type form input[type="radio"]:focus-visible { outline: 0; }
+  main > section:first-of-type form > fieldset > fieldset label strong { font-size: .98rem; color: var(--tinta); }
+  main > section:first-of-type form > fieldset > fieldset label small { grid-column: 2; font-size: .84rem; color: var(--suave); }
+  main > section:first-of-type form > fieldset > fieldset label data { grid-column: 3; grid-row: 1 / span 2; font-weight: 700; color: var(--tinta); }
+  /* Métodos de pago en rejilla de 2 × 2 */
+  main > section:first-of-type form > fieldset:nth-of-type(3) > fieldset:first-of-type { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  main > section:first-of-type form > fieldset:nth-of-type(3) > fieldset:first-of-type > legend { grid-column: 1 / -1; }
+
+  /* Botones de cada paso */
+  main > section:first-of-type form > fieldset > button:last-of-type {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .7rem;
+    margin-top: .4rem;
+    padding: 1.1rem 1.4rem;
+    border-radius: 40px;
+    background: var(--tinta);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--blanco);
+    transition: background .3s ease, transform .4s var(--curva);
+  }
+  main > section:first-of-type form > fieldset > button:last-of-type::after { content: "\2192"; transition: translate .4s var(--curva); }
+  main > section:first-of-type form > fieldset > button:last-of-type:hover { background: var(--rojo); transform: translateY(-2px); }
+  main > section:first-of-type form > fieldset > button:last-of-type:hover::after { translate: 4px 0; }
+  main > section:first-of-type form > fieldset > button[type="submit"] { padding-block: 1.25rem; background: var(--rojo); font-size: 1.08rem; }
+  main > section:first-of-type form > fieldset > button[type="submit"]:hover { background: var(--tinta); }
+  main > section:first-of-type form > fieldset > button[aria-busy="true"] { pointer-events: none; }
+  main > section:first-of-type form > fieldset > button[aria-busy="true"]::after {
+    content: "";
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, .35);
+    border-top-color: var(--blanco);
+    border-radius: 50%;
+    animation: rodar .8s linear infinite;
+  }
+  main > section:first-of-type form > fieldset > p:last-of-type { font-size: .82rem; text-align: center; color: var(--suave); }
+  main > section:first-of-type form > fieldset > p[role="alert"] { font-size: .9rem; font-weight: 600; text-align: left; color: var(--rojo-oscuro); }
+  main > section:first-of-type form > fieldset > p[role="alert"]:empty { display: none; }
+  @keyframes rodar { to { rotate: 360deg; } }
+
+  /* plegados: solo el título (y el resumen cuando está hecho) */
+  main > section:first-of-type > form > fieldset[data-estado="espera"] > :not(legend),
+  main > section:first-of-type > form > fieldset[data-estado="hecho"] > :not(legend, output, button:first-of-type),
+  main > section:first-of-type > form > fieldset[data-estado="activo"] > output,
+  main > section:first-of-type > form > fieldset[data-estado="activo"] > button:first-of-type:not(:last-of-type) { display: none; }
+
+  /* ============ 12. TARJETA EN 3D: se gira para enseñar el CVC ============ */
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: min(380px, 100%);
+    aspect-ratio: 1.586;
+    margin: .4rem 0 .6rem;
+    perspective: 1200px;
+  }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure section {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    padding: 7% 7.5%;
+    border-radius: 20px;
+    background:
+      radial-gradient(120% 90% at 100% 0%, rgba(200, 16, 46, .9), transparent 55%),
+      radial-gradient(80% 80% at 0% 100%, rgba(255, 255, 255, .08), transparent 60%),
+      linear-gradient(135deg, #2A2A31, var(--tinta));
+    box-shadow: 0 30px 50px -24px rgba(17, 17, 20, .6), inset 0 0 0 1px rgba(255, 255, 255, .08);
+    font-family: var(--sans);
+    color: var(--blanco);
+    backface-visibility: hidden;
+    transition: rotate 1s var(--curva), background .6s ease;
+  }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure[data-marca="visa"] section { background: radial-gradient(120% 90% at 100% 0%, rgba(58, 96, 255, .85), transparent 55%), linear-gradient(135deg, #1A2149, #0B0E22); }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure[data-marca="mastercard"] section { background: radial-gradient(90% 80% at 100% 0%, rgba(255, 140, 0, .85), transparent 55%), radial-gradient(90% 80% at 70% 0%, rgba(235, 0, 27, .7), transparent 60%), linear-gradient(135deg, #2A2A31, #111114); }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure[data-marca="amex"] section { background: radial-gradient(120% 90% at 100% 0%, rgba(80, 200, 220, .8), transparent 55%), linear-gradient(135deg, #0F4C5C, #082A33); }
+  /* Cara delantera */
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure section:first-of-type {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto 1fr auto auto;
+    column-gap: 1rem;
+  }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure section:first-of-type::before {
+    content: "";
+    grid-row: 2;
+    align-self: center;
+    width: 46px;
+    height: 34px;
+    border-radius: 7px;
+    background:
+      linear-gradient(90deg, transparent 45%, rgba(0, 0, 0, .18) 45% 55%, transparent 55%),
+      linear-gradient(0deg, transparent 30%, rgba(0, 0, 0, .18) 30% 36%, transparent 36% 64%, rgba(0, 0, 0, .18) 64% 70%, transparent 70%),
+      linear-gradient(135deg, #F4D58D, #C9A44C);
+  }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure section:first-of-type p:first-of-type { grid-column: 1; grid-row: 1; font-family: var(--display); font-size: 1.35rem; font-style: italic; font-weight: 600; }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure section:first-of-type p:nth-of-type(2) { grid-column: 2; grid-row: 1; justify-self: end; font-size: .95rem; font-weight: 700; font-style: italic; letter-spacing: .04em; text-transform: uppercase; }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure section:first-of-type p:nth-of-type(3) { grid-column: 1 / -1; grid-row: 3; font-size: clamp(1.05rem, 4.2vw, 1.45rem); font-weight: 600; letter-spacing: .1em; font-variant-numeric: tabular-nums; white-space: nowrap; text-shadow: 0 1px 2px rgba(0, 0, 0, .4); }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure section:first-of-type p:nth-of-type(4),
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure section:first-of-type p:nth-of-type(5) { grid-row: 4; display: grid; margin-top: .5rem; font-size: .88rem; font-weight: 600; text-transform: uppercase; }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure section:first-of-type p:nth-of-type(5) { grid-column: 2; text-align: right; }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure section:first-of-type p:nth-of-type(4) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure small { font-size: .6rem; letter-spacing: .14em; color: rgba(255, 255, 255, .62); }
+  /* Cara trasera: banda magnética y CVC */
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure section:last-of-type { align-content: center; padding-inline: 0; rotate: y -180deg; }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure section:last-of-type::before { content: ""; position: absolute; left: 0; right: 0; top: 14%; height: 20%; background: #050506; }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure section:last-of-type p {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: .8rem;
+    margin: 12% 7.5% 0;
+    padding: .55rem .9rem;
+    border-radius: 6px;
+    background: repeating-linear-gradient(-45deg, #F2F2F4 0 6px, #E2E2E6 6px 12px);
+    font-size: 1.05rem;
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: .12em;
+    color: var(--tinta);
+  }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure section:last-of-type small { font-style: normal; color: var(--suave); }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure[data-giro] section:first-of-type { rotate: y 180deg; }
+  main > section:first-of-type form fieldset[data-metodo="tarjeta"] > figure[data-giro] section:last-of-type { rotate: y 0deg; }
+
+  /* Bizum, PayPal y transferencia */
+  main > section:first-of-type form fieldset[data-metodo]:not([data-metodo="tarjeta"]),
+  main > section:first-of-type form fieldset[data-empresa] { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 1.1rem 1.2rem; border-radius: 18px; background: var(--hueso); }
+  main > section:first-of-type form fieldset[data-metodo] > p { grid-column: 1 / -1; font-size: .9rem; color: var(--texto); }
+  main > section:first-of-type form fieldset[data-metodo]:not([data-metodo="tarjeta"]) label { grid-column: 1 / -1; }
+  main > section:first-of-type form fieldset[data-metodo]:not([data-metodo="tarjeta"]) input,
+  main > section:first-of-type form fieldset[data-empresa] input { background: var(--blanco); }
+  main > section:first-of-type form fieldset[data-metodo] dl { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .45rem 1.2rem; font-size: .92rem; }
+  main > section:first-of-type form fieldset[data-metodo] dt { color: var(--suave); }
+  main > section:first-of-type form fieldset[data-metodo] dd { font-weight: 700; color: var(--tinta); font-variant-numeric: tabular-nums; }
+  main > section:first-of-type form fieldset[hidden] { display: none; }
+
+  /* ============ 13. EL RESUMEN OSCURO ============ */
+  main > aside {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    display: grid;
+    align-content: start;
+    gap: .9rem;
+    height: 100svh;
+    padding: 5rem max(var(--margen), calc((100vw - var(--ancho)) / 2)) 0 clamp(1.6rem, 3.6vw, 3.4rem);
+    overflow-y: auto;
+    /* mancha roja detrás de la chaqueta y polígonos apenas visibles */
+    background:
+      url("img/fondos/mancha-vino.svg") 62% -1.5rem / min(100%, 560px) auto no-repeat,
+      linear-gradient(rgba(18, 3, 4, .93), rgba(18, 3, 4, .97)),
+      url("img/fondos/poligonos-finos.svg") center / cover,
+      var(--noche);
+    color: rgba(255, 255, 255, .72);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, .2) transparent;
+  }
+  main > aside > * { max-width: 520px; }
+  /* La chaqueta del pedido girando en 3D */
+  main > aside > figure { height: clamp(120px, 19svh, 190px); margin: -1rem 0 -.4rem; }
+  main > aside > figure img { position: absolute; left: 50%; top: 50%; width: 62%; translate: -50% -50%; transition: opacity .5s ease; }
+  main > aside > figure[data-estado="3d"] img { opacity: 0; }
+  main > aside > figure canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: pan-y; }
+  main > aside > header { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding-bottom: .9rem; border-bottom: 1px solid rgba(255, 255, 255, .14); }
+  main > aside h2 { font-size: 2rem; color: var(--blanco); }
+  main > aside > header p { font-size: .9rem; }
+  main > aside > header b { color: var(--blanco); }
+
+  main > aside > ul { display: grid; gap: .65rem; }
+  main > aside > ul li {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: .2rem .9rem;
+    padding: .45rem .6rem .45rem .45rem;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, .05);
+  }
+  main > aside > ul figure { grid-row: 1 / span 2; aspect-ratio: 1; border-radius: 12px; background: var(--blanco); }
+  main > aside > ul figure img { height: 100%; object-fit: contain; padding: .2rem; }
+  main > aside > ul figure::after {
+    content: attr(data-cantidad);
+    position: absolute;
+    right: -6px;
+    top: -6px;
+    display: grid;
+    place-items: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 .3rem;
+    border-radius: 12px;
+    background: var(--rojo);
+    font-size: .74rem;
+    font-weight: 700;
+    color: var(--blanco);
+  }
+  main > aside > ul li > p:first-of-type { display: grid; line-height: 1.3; }
+  main > aside > ul li > p:first-of-type strong { font-size: .95rem; color: var(--blanco); }
+  main > aside > ul li > p:first-of-type small { font-size: .8rem; }
+  main > aside > ul li > b { grid-column: 3; grid-row: 1; font-weight: 700; color: var(--blanco); }
+  main > aside > ul li > p:last-of-type { grid-column: 2 / -1; display: flex; align-items: center; gap: .2rem; }
+  main > aside > ul li > p:last-of-type button { width: 28px; height: 28px; border-radius: 50%; background: rgba(255, 255, 255, .1); color: var(--blanco); transition: background .25s ease; }
+  main > aside > ul li > p:last-of-type button:hover { background: rgba(255, 255, 255, .25); }
+  main > aside > ul li > p:last-of-type output { min-width: 1.6rem; text-align: center; font-weight: 700; color: var(--blanco); }
+
+  /* Código de descuento */
+  main > aside > form { display: flex; gap: .4rem; padding: .35rem; border-radius: 40px; background: rgba(255, 255, 255, .08); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16); }
+  main > aside > form label { flex: 1; display: flex; }
+  main > aside > form label span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  main > aside > form input { flex: 1; min-width: 0; padding: 0 1rem; border: 0; outline: 0; background: transparent; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--blanco); }
+  main > aside > form input::placeholder { letter-spacing: 0; text-transform: none; color: rgba(255, 255, 255, .55); }
+  main > aside > form button { padding: .7rem 1.2rem; border-radius: 40px; background: var(--blanco); font-weight: 700; color: var(--tinta); transition: background .3s ease, color .3s ease; }
+  main > aside > form button:hover { background: var(--rojo); color: var(--blanco); }
+  main > aside > p[role="status"] { min-height: 1.2em; margin-top: -.6rem; font-size: .85rem; color: #FF9AA8; }
+  main > aside > p[role="status"][data-tipo="ok"] { color: #7BE0A6; }
+
+  /* Envío gratis */
+  main > aside > p:nth-of-type(2) { font-size: .88rem; font-weight: 600; color: var(--blanco); }
+  main > aside > progress { width: 100%; height: 6px; margin-top: -.6rem; border: 0; border-radius: 6px; background: rgba(255, 255, 255, .14); overflow: hidden; appearance: none; }
+  main > aside > progress::-webkit-progress-bar { background: rgba(255, 255, 255, .14); }
+  main > aside > progress::-webkit-progress-value { background: linear-gradient(90deg, var(--rojo), #FF6B81); border-radius: 6px; transition: width .6s var(--curva); }
+  main > aside > progress::-moz-progress-bar { background: linear-gradient(90deg, var(--rojo), #FF6B81); border-radius: 6px; }
+
+  /* Totales */
+  /* Totales: se quedan pegados abajo aunque la lista sea larga */
+  main > aside dl {
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: .45rem 1rem;
+    margin-top: .2rem;
+    padding: 1rem 0 1.6rem;
+    border-top: 1px solid rgba(255, 255, 255, .14);
+    background: var(--noche);
+    box-shadow: 0 -24px 24px -6px var(--noche);
+    font-size: .95rem;
+  }
+  main > aside dd { text-align: right; font-weight: 600; color: var(--blanco); font-variant-numeric: tabular-nums; }
+  main > aside dt:nth-of-type(2), main > aside dd:nth-of-type(2) { color: #7BE0A6; }
+  main > aside dt:nth-of-type(4), main > aside dd:nth-of-type(4) { font-size: .84rem; font-weight: 400; color: rgba(255, 255, 255, .62); }
+  main > aside dt:last-of-type,
+  main > aside dd:last-of-type { display: flex; align-items: flex-end; margin-top: .5rem; padding-top: .8rem; border-top: 1px solid rgba(255, 255, 255, .14); color: var(--blanco); }
+  main > aside dt:last-of-type { padding-bottom: .3rem; font-weight: 700; }
+  main > aside dd:last-of-type { justify-content: flex-end; font-family: var(--display); font-size: 2.5rem; font-weight: 600; line-height: 1; }
+
+  /* ============ 14. CONFIRMACIÓN: el recibo ============ */
+  main > section:nth-of-type(2),
+  main > section:nth-of-type(3) {
+    grid-column: 1 / -1;
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 2rem;
+    padding: 8rem var(--margen) 5rem;
+    background:
+      radial-gradient(50% 40% at 50% 0%, rgba(200, 16, 46, .1), transparent 70%),
+      var(--hueso);
+    text-align: center;
+  }
+  main > section:nth-of-type(2) { background: url("img/fondos/hexagonos.svg") center / cover, var(--rojo); color: var(--blanco); }
+  main > section:nth-of-type(2) > header > p:first-of-type { color: var(--blanco); }
+  main > section:nth-of-type(2) > header > p:first-of-type::before { background: var(--blanco); box-shadow: 0 0 0 4px rgba(255, 255, 255, .25); }
+  main > section:nth-of-type(2) > header h1 { color: var(--blanco); }
+  main > section:nth-of-type(2) > header h1 em { color: #1C0306; }
+  main > section:nth-of-type(2) > header { display: grid; justify-items: center; gap: .8rem; max-width: 640px; }
+  /* el círculo con la marca de hecho, dibujado y animado con CSS */
+  main > section:nth-of-type(2) > header::before {
+    content: "";
+    width: 84px;
+    height: 84px;
+    margin-bottom: .6rem;
+    border-radius: 50%;
+    background:
+      var(--blanco);
+    box-shadow: 0 0 0 10px rgba(255, 255, 255, .2), 0 0 0 22px rgba(255, 255, 255, .1);
+    animation: latido 1.2s var(--curva) both;
+  }
+  main > section:nth-of-type(2) > header::after {
+    content: "";
+    position: absolute;
+    width: 34px;
+    height: 18px;
+    margin-top: 26px;
+    border: solid var(--rojo);
+    border-width: 0 0 5px 5px;
+    rotate: -45deg;
+    animation: marca .5s var(--curva) .45s both;
+  }
+  main > section:nth-of-type(2) > header { position: relative; }
+  main > section:nth-of-type(2) h1 { font-size: clamp(3rem, 7vw, 5.6rem); }
+  main > section:nth-of-type(2) > header > p:last-of-type { font-size: 1.08rem; color: var(--blanco); }
+  main > section:nth-of-type(2) > header > p:last-of-type b { color: var(--blanco); }
+  @keyframes latido { from { scale: .4; opacity: 0; } 60% { scale: 1.08; opacity: 1; } }
+  @keyframes marca { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+  /* El recibo: ticket con bordes troquelados */
+  main > section:nth-of-type(2) > article {
+    width: min(760px, 100%);
+    padding: 2.4rem clamp(1.2rem, 4vw, 2.8rem) 2.6rem;
+    background: var(--blanco);
+    filter: drop-shadow(0 30px 40px rgba(17, 17, 20, .14));
+    text-align: left;
+    -webkit-mask: radial-gradient(circle 9px at 50% 0, transparent 98%, #000) 50% 0 / 24px 51% repeat-x, radial-gradient(circle 9px at 50% 100%, transparent 98%, #000) 50% 100% / 24px 51% repeat-x;
+    mask: radial-gradient(circle 9px at 50% 0, transparent 98%, #000) 50% 0 / 24px 51% repeat-x, radial-gradient(circle 9px at 50% 100%, transparent 98%, #000) 50% 100% / 24px 51% repeat-x;
+    animation: subir .9s var(--curva) .3s both;
+  }
+  main > section:nth-of-type(2) > article > header { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .4rem 2rem; padding-bottom: 1.4rem; border-bottom: 2px dashed var(--gris-2); }
+  main > section:nth-of-type(2) > article > header > p { font-family: var(--display); font-size: 1.5rem; font-style: italic; font-weight: 600; color: var(--tinta); }
+  main > section:nth-of-type(2) > article > header h2 { grid-column: 1; font-size: clamp(1.6rem, 3vw, 2.2rem); }
+  main > section:nth-of-type(2) > article > header h2 em { display: block; white-space: nowrap; color: var(--rojo); }
+  main > section:nth-of-type(2) > article > header dl { grid-column: 2; grid-row: 1 / span 2; display: grid; grid-template-columns: auto auto; gap: .2rem 1rem; font-size: .88rem; }
+  main > section:nth-of-type(2) > article > header dt { color: var(--suave); }
+  main > section:nth-of-type(2) > article > header dd { text-align: right; font-weight: 700; color: var(--tinta); }
+  main > section:nth-of-type(2) > article { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2rem; }
+  main > section:nth-of-type(2) > article > header,
+  main > section:nth-of-type(2) > article > table,
+  main > section:nth-of-type(2) > article > footer { grid-column: 1 / -1; }
+  main > section:nth-of-type(2) > article > section { display: grid; align-content: start; gap: .4rem; padding: 1.4rem 0; }
+  main > section:nth-of-type(2) > article h3 { font-family: var(--sans); font-size: .74rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--suave); }
+  main > section:nth-of-type(2) > article > section p { font-size: .94rem; line-height: 1.55; color: var(--tinta); }
+  main > section:nth-of-type(2) table { width: 100%; border-collapse: collapse; font-size: .94rem; }
+  main > section:nth-of-type(2) caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  main > section:nth-of-type(2) thead th { padding: .7rem 0; border-block: 1px solid var(--linea); font-size: .74rem; font-weight: 700; letter-spacing: .12em; text-align: right; text-transform: uppercase; color: var(--suave); }
+  main > section:nth-of-type(2) thead th:first-of-type { text-align: left; }
+  main > section:nth-of-type(2) tbody td { padding: .8rem 0; border-bottom: 1px solid var(--linea); text-align: right; color: var(--tinta); font-variant-numeric: tabular-nums; }
+  main > section:nth-of-type(2) tbody td:first-of-type { display: flex; align-items: center; gap: .9rem; text-align: left; }
+  main > section:nth-of-type(2) tbody figure { flex: 0 0 54px; aspect-ratio: 1; border-radius: 12px; background: var(--hueso); }
+  main > section:nth-of-type(2) tbody figure img { height: 100%; object-fit: contain; padding: .2rem; }
+  main > section:nth-of-type(2) tbody p { display: grid; line-height: 1.3; }
+  main > section:nth-of-type(2) tbody small { font-size: .8rem; color: var(--suave); }
+  main > section:nth-of-type(2) tfoot th { padding: .45rem 0; font-weight: 500; text-align: right; color: var(--suave); }
+  main > section:nth-of-type(2) tfoot td { width: 10rem; padding: .45rem 0; text-align: right; font-weight: 600; color: var(--tinta); font-variant-numeric: tabular-nums; }
+  main > section:nth-of-type(2) tfoot tr:first-of-type > * { padding-top: 1.1rem; }
+  main > section:nth-of-type(2) tfoot tr:last-of-type > * { padding-top: .9rem; border-top: 2px solid var(--tinta); font-size: 1.1rem; font-weight: 700; color: var(--tinta); }
+  main > section:nth-of-type(2) tfoot tr:last-of-type td { font-family: var(--display); font-size: 1.7rem; white-space: nowrap; }
+  main > section:nth-of-type(2) > article > footer { display: grid; gap: .3rem; margin-top: 1.6rem; padding-top: 1.2rem; border-top: 2px dashed var(--gris-2); font-size: .86rem; text-align: center; color: var(--suave); }
+  main > section:nth-of-type(2) > p:last-of-type,
+  main > section:nth-of-type(3) > p:last-of-type { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; }
+  main > section:nth-of-type(2) > p:last-of-type button,
+  main > section:nth-of-type(2) > p:last-of-type a,
+  main > section:nth-of-type(3) > p:last-of-type a { padding: 1rem 1.5rem; border-radius: 40px; font-weight: 700; transition: background .3s ease, color .3s ease; }
+  main > section:nth-of-type(2) > p:last-of-type button { box-shadow: inset 0 0 0 1.5px var(--blanco); color: var(--blanco); }
+  main > section:nth-of-type(2) > p:last-of-type button:hover { background: var(--blanco); color: var(--tinta); }
+  main > section:nth-of-type(2) > p:last-of-type a,
+  main > section:nth-of-type(3) > p:last-of-type a { background: var(--tinta); color: var(--blanco); }
+  main > section:nth-of-type(2) > p:last-of-type a:hover,
+  main > section:nth-of-type(3) > p:last-of-type a:hover { background: var(--rojo); color: var(--blanco); }
+
+  /* ============ 15. CESTA VACÍA ============ */
+  main > section:nth-of-type(3) { min-height: 100svh; align-content: center; gap: 1.2rem; }
+  main > section:nth-of-type(3) figure { width: min(520px, 90%); rotate: -8deg; filter: drop-shadow(0 40px 30px rgba(17, 17, 20, .18)); animation: flotar 7s ease-in-out infinite; }
+  main > section:nth-of-type(3) h1 { font-size: clamp(2.8rem, 6vw, 5rem); }
+  main > section:nth-of-type(3) > p:first-of-type { max-width: 460px; font-size: 1.08rem; }
+
+  /* Pie mínimo */
+  body > footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: .8rem 2rem;
+    padding: 1.6rem max(var(--margen), calc((100% - var(--ancho)) / 2));
+    background: radial-gradient(60% 140% at 50% 140%, rgba(200, 16, 46, .55), transparent 70%), var(--noche);
+    font-size: .86rem;
+  }
+  body > footer::before, body > footer::after { content: none; }
+  body > footer a { font-weight: 600; color: rgba(255, 255, 255, .85); }
+  body > footer a:hover { color: var(--blanco); }
+
+  /* Imprimir solo el recibo */
+  @media print {
+    body > header, body > footer, main > section:nth-of-type(2) > p:last-of-type, main > section:nth-of-type(2) > header::before, main > section:nth-of-type(2) > header::after { display: none; }
+    main > section:nth-of-type(2) { padding: 0; background: none; }
+    main > section:nth-of-type(2) > article { filter: none; -webkit-mask: none; mask: none; }
+  }
+
+  /* ============ 16. PAGO EN TABLETA Y MÓVIL ============ */
+  @media (max-width: 1000px) {
+    main { grid-template-columns: minmax(0, 1fr); }
+    main > section:first-of-type { padding: 6.4rem var(--margen) 3rem; }
+    main > section:first-of-type > * { max-width: none; }
+    main > aside { position: relative; height: auto; padding: 3rem var(--margen); overflow: visible; }
+    main > aside > * { max-width: none; }
+    body > header > a:last-of-type { background: var(--blanco); box-shadow: inset 0 0 0 1px var(--linea); color: var(--tinta); }
+  }
+  @media (max-width: 640px) {
+    body > header { grid-template-columns: 1fr auto; }
+    body > header > p { display: none; }
+    body > header > a:last-of-type { font-size: 0; padding: .6rem .9rem; }
+    body > header > a:last-of-type::before { content: "\2190  Tienda"; font-size: .86rem; }
+    main > section:first-of-type > section > p:first-of-type { grid-template-columns: minmax(0, 1fr); }
+    main > section:first-of-type > form > fieldset { grid-template-columns: minmax(0, 1fr); padding: 1.2rem 1.1rem 1.3rem; }
+    main > section:first-of-type > form > fieldset > button:first-of-type:not(:last-of-type) { grid-column: 1; grid-row: auto; }
+    main > section:first-of-type form label { grid-column: 1 / -1; }
+    main > section:first-of-type form > fieldset:nth-of-type(3) > fieldset:first-of-type { grid-template-columns: minmax(0, 1fr); }
+    main > section:first-of-type form fieldset[data-metodo="tarjeta"] label:has(input[name="caducidad"]),
+    main > section:first-of-type form fieldset[data-metodo="tarjeta"] label:has(input[name="cvc"]) { grid-column: auto; }
+    main > section:first-of-type > header li { font-size: .78rem; }
+    main > section:nth-of-type(2) > article > header { grid-template-columns: minmax(0, 1fr); }
+    main > section:nth-of-type(2) > article > header dl { grid-column: 1; grid-row: auto; margin-top: .6rem; }
+    main > section:nth-of-type(2) > article { grid-template-columns: minmax(0, 1fr); }
+    main > section:nth-of-type(2) > article > section { padding-block: 1rem 0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html"><b aria-hidden="true">ch</b>Chaket</a>
+  <p>Pago 100 % seguro</p>
+  <a href="index.html#coleccion">Seguir comprando</a>
+</header>
+
+<main>
+
+  <!-- 1. FINALIZAR COMPRA: pago exprés y tres pasos (contacto, envío y pago) -->
+  <section aria-labelledby="titulo-pago">
+    <header>
+      <p>Finalizar compra</p>
+      <h1 id="titulo-pago">Ya casi es <em>tuya</em></h1>
+      <ol aria-label="Pasos de la compra">
+        <li aria-current="step">Contacto</li>
+        <li>Envío</li>
+        <li>Pago</li>
+      </ol>
+    </header>
+
+    <section aria-labelledby="titulo-expres">
+      <h2 id="titulo-expres">Pago exprés</h2>
+      <p><button type="button">Apple Pay</button><button type="button">Google Pay</button><button type="button">PayPal</button></p>
+      <p>o paga con tus datos</p>
+    </section>
+
+    <form novalidate aria-label="Datos del pedido">
+      <fieldset data-estado="activo">
+        <legend><b>1</b> Contacto</legend>
+        <label>Correo electrónico<input type="email" name="correo" autocomplete="email" placeholder="tu@correo.es" required></label>
+        <label>Teléfono<input type="tel" name="telefono" autocomplete="tel" placeholder="600 000 000" pattern="[0-9 +]{9,15}" required></label>
+        <label><input type="checkbox" name="novedades"> Quiero recibir los colores nuevos antes que nadie</label>
+        <output></output>
+        <button type="button">Cambiar</button>
+        <button type="button">Continuar al envío</button>
+      </fieldset>
+
+      <fieldset data-estado="espera">
+        <legend><b>2</b> Envío</legend>
+        <label>Nombre<input name="nombre" autocomplete="given-name" placeholder="Laura" required></label>
+        <label>Apellidos<input name="apellidos" autocomplete="family-name" placeholder="García López" required></label>
+        <label>Dirección<input name="direccion" autocomplete="street-address" placeholder="Calle, número, piso y puerta" required></label>
+        <label>Código postal<input name="cp" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" placeholder="28013" required></label>
+        <label>Ciudad<input name="ciudad" autocomplete="address-level2" placeholder="Madrid" required></label>
+        <label>Provincia
+          <select name="provincia" autocomplete="address-level1" required>
+            <option value="">Elige tu provincia</option>
+            <option>A Coruña</option>
+            <option>Álava</option>
+            <option>Albacete</option>
+            <option>Alicante</option>
+            <option>Almería</option>
+            <option>Asturias</option>
+            <option>Ávila</option>
+            <option>Badajoz</option>
+            <option>Barcelona</option>
+            <option>Bizkaia</option>
+            <option>Burgos</option>
+            <option>Cáceres</option>
+            <option>Cádiz</option>
+            <option>Cantabria</option>
+            <option>Castellón</option>
+            <option>Ceuta</option>
+            <option>Ciudad Real</option>
+            <option>Córdoba</option>
+            <option>Cuenca</option>
+            <option>Gipuzkoa</option>
+            <option>Girona</option>
+            <option>Granada</option>
+            <option>Guadalajara</option>
+            <option>Huelva</option>
+            <option>Huesca</option>
+            <option>Illes Balears</option>
+            <option>Jaén</option>
+            <option>La Rioja</option>
+            <option>Las Palmas</option>
+            <option>León</option>
+            <option>Lleida</option>
+            <option>Lugo</option>
+            <option>Madrid</option>
+            <option>Málaga</option>
+            <option>Melilla</option>
+            <option>Murcia</option>
+            <option>Navarra</option>
+            <option>Ourense</option>
+            <option>Palencia</option>
+            <option>Pontevedra</option>
+            <option>Salamanca</option>
+            <option>Santa Cruz de Tenerife</option>
+            <option>Segovia</option>
+            <option>Sevilla</option>
+            <option>Soria</option>
+            <option>Tarragona</option>
+            <option>Teruel</option>
+            <option>Toledo</option>
+            <option>Valencia</option>
+            <option>Valladolid</option>
+            <option>Zamora</option>
+            <option>Zaragoza</option>
+          </select>
+        </label>
+        <fieldset>
+          <legend>Forma de envío</legend>
+          <label><input type="radio" name="envio" value="estandar" checked><strong>Estándar</strong><small>48–72 h a domicilio · gratis desde 100 €</small><data value="4.95">4,95 €</data></label>
+          <label><input type="radio" name="envio" value="express"><strong>Exprés</strong><small>Mañana antes de las 14:00</small><data value="9.95">9,95 €</data></label>
+          <label><input type="radio" name="envio" value="tienda"><strong>Recogida en tienda</strong><small>Chaket Store · Gran Vía 26, Madrid</small><data value="0">Gratis</data></label>
+        </fieldset>
+        <output></output>
+        <button type="button">Cambiar</button>
+        <button type="button">Continuar al pago</button>
+      </fieldset>
+
+      <fieldset data-estado="espera">
+        <legend><b>3</b> Pago</legend>
+        <fieldset>
+          <legend>Método de pago</legend>
+          <label><input type="radio" name="metodo" value="tarjeta" checked><strong>Tarjeta</strong><small>Visa, Mastercard y Amex</small></label>
+          <label><input type="radio" name="metodo" value="bizum"><strong>Bizum</strong><small>Al instante desde tu móvil</small></label>
+          <label><input type="radio" name="metodo" value="paypal"><strong>PayPal</strong><small>Con tu cuenta, en un paso</small></label>
+          <label><input type="radio" name="metodo" value="transferencia"><strong>Transferencia</strong><small>Enviamos al recibir el pago</small></label>
+        </fieldset>
+
+        <fieldset data-metodo="tarjeta">
+          <legend>Datos de la tarjeta</legend>
+          <figure aria-hidden="true">
+            <section>
+              <p>Chaket</p>
+              <p>Tarjeta</p>
+              <p>•••• •••• •••• ••••</p>
+              <p><small>Titular</small>Nombre Apellido</p>
+              <p><small>Caduca</small>MM/AA</p>
+            </section>
+            <section>
+              <p><small>CVC</small>•••</p>
+            </section>
+          </figure>
+          <label>Titular de la tarjeta<input name="titular" autocomplete="cc-name" placeholder="Como aparece en la tarjeta" required></label>
+          <label>Número de tarjeta<input name="numero" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" maxlength="23" required></label>
+          <label>Caducidad<input name="caducidad" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/AA" pattern="(0[1-9]|1[0-2])/[0-9]{2}" maxlength="5" required></label>
+          <label>CVC<input name="cvc" inputmode="numeric" autocomplete="cc-csc" placeholder="123" pattern="[0-9]{3,4}" maxlength="4" required></label>
+        </fieldset>
+
+        <fieldset data-metodo="bizum" hidden disabled>
+          <legend>Bizum</legend>
+          <label>Móvil asociado a Bizum<input type="tel" name="bizum" autocomplete="tel" placeholder="600 000 000" pattern="[67][0-9 ]{8,11}" required></label>
+          <p>Te llegará una notificación a la aplicación de tu banco para aceptar el pago.</p>
+        </fieldset>
+
+        <fieldset data-metodo="paypal" hidden disabled>
+          <legend>PayPal</legend>
+          <p>Al pulsar «Pagar» te llevaremos a PayPal para confirmar con tu cuenta. Volverás aquí en cuanto termines.</p>
+        </fieldset>
+
+        <fieldset data-metodo="transferencia" hidden disabled>
+          <legend>Transferencia bancaria</legend>
+          <dl>
+            <dt>Beneficiario</dt><dd>Chaket Outerwear S.L.</dd>
+            <dt>IBAN</dt><dd>ES00 0000 0000 0000 0000 0000</dd>
+            <dt>Concepto</dt><dd>CHK-000000-0000</dd>
+          </dl>
+          <p>Reservamos tus chaquetas 48 horas y las enviamos en cuanto llega la transferencia.</p>
+        </fieldset>
+
+        <label><input type="checkbox" name="empresa"> Necesito la factura a nombre de una empresa o autónomo</label>
+        <fieldset data-empresa hidden disabled>
+          <legend>Datos fiscales</legend>
+          <label>Razón social<input name="razon" autocomplete="organization" required></label>
+          <label>NIF o CIF<input name="nif" pattern="[A-Za-z0-9]{9}" maxlength="9" placeholder="B12345678" required></label>
+        </fieldset>
+
+        <label><input type="checkbox" name="condiciones" required> He leído y acepto las condiciones de compra y la política de privacidad.</label>
+        <p role="alert"></p>
+        <button type="submit">Pagar</button>
+        <p>Pago cifrado de extremo a extremo · Devolución gratis durante 30 días</p>
+      </fieldset>
+    </form>
+  </section>
+
+  <!-- 2. RESUMEN: la chaqueta en 3D, productos, código, envío gratis y totales -->
+  <aside aria-labelledby="titulo-resumen">
+    <figure>
+      <img src="img/chaquetas/rojo.webp" alt="" width="1000" height="1000">
+      <canvas aria-hidden="true"></canvas>
+    </figure>
+    <header>
+      <h2 id="titulo-resumen">Tu pedido</h2>
+      <p><b>0</b> artículos</p>
+    </header>
+    <ul aria-label="Productos del pedido"></ul>
+    <form aria-label="Código de descuento" novalidate>
+      <label><span>Código de descuento</span><input name="codigo" placeholder="Código de descuento" autocomplete="off"></label>
+      <button type="submit">Aplicar</button>
+    </form>
+    <p role="status"></p>
+    <p>Envío gratis a partir de 100 €</p>
+    <progress max="100" value="0" aria-label="Camino al envío gratis"></progress>
+    <dl>
+      <dt>Subtotal</dt><dd>0 €</dd>
+      <dt>Descuento</dt><dd>0 €</dd>
+      <dt>Envío</dt><dd>Gratis</dd>
+      <dt>IVA incluido (21 %)</dt><dd>0 €</dd>
+      <dt>Total</dt><dd>0 €</dd>
+    </dl>
+  </aside>
+
+  <!-- 3. CONFIRMACIÓN CON EL RECIBO -->
+  <section aria-labelledby="titulo-gracias" hidden>
+    <header>
+      <p>Pedido confirmado</p>
+      <h1 id="titulo-gracias">Gracias, <em>Laura</em></h1>
+      <p>Hemos enviado el recibo a tu correo.</p>
+    </header>
+    <article aria-labelledby="titulo-recibo">
+      <header>
+        <p>Chaket</p>
+        <h2 id="titulo-recibo">Factura <em>CHK-000000-0000</em></h2>
+        <dl>
+          <dt>Fecha</dt><dd>—</dd>
+          <dt>Pedido</dt><dd>—</dd>
+          <dt>Estado</dt><dd>—</dd>
+        </dl>
+      </header>
+      <section>
+        <h3>Cliente</h3>
+        <p>—</p>
+      </section>
+      <section>
+        <h3>Envío y pago</h3>
+        <p>—</p>
+      </section>
+      <table>
+        <caption>Detalle del pedido</caption>
+        <thead>
+          <tr><th scope="col">Producto</th><th scope="col">Cantidad</th><th scope="col">Precio</th><th scope="col">Importe</th></tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table>
+      <footer>
+        <p>Chaket Outerwear S.L. · CIF B00000000 · Gran Vía 26, 28013 Madrid</p>
+        <p>Precios con IVA incluido (21 %). Cambios y devoluciones gratis durante 30 días desde la entrega.</p>
+      </footer>
+    </article>
+    <p><button type="button">Imprimir o guardar en PDF</button><a href="index.html#coleccion">Seguir comprando</a></p>
+  </section>
+
+  <!-- 4. CESTA VACÍA -->
+  <section aria-labelledby="titulo-vacia" hidden>
+    <figure><img src="img/chaquetas/negro.webp" alt="Chaqueta Chaket negra" width="1000" height="1000" loading="lazy"></figure>
+    <h1 id="titulo-vacia">Tu cesta está <em>vacía</em></h1>
+    <p>Pasa por el armario, elige tu chaqueta y vuelve aquí para pagar en un minuto.</p>
+    <p><a href="index.html#coleccion">Ver la colección</a></p>
+  </section>
+
+</main>
+
+<footer>
+  <small><a href="#">Aviso legal</a> | <a href="#">Privacidad</a> | <a href="#">Condiciones de compra</a> | <a href="index.html#club">Club</a></small>
+  <small>© 2026 Chaket | Todos los derechos reservados · Plantilla premium de All Pixels</small>
+</footer>
+
+<script src="js/three.min.js"></script>
+<script src="js/GLTFLoader.js"></script>
+<script src="js/RoomEnvironment.js"></script>
+<script src="js/meshopt-decoder.js"></script>
+<script src="js/catalogo.js"></script>
+<script src="js/chaket-3d.js"></script>
+<script src="js/tienda.js"></script>
+<script src="js/modelo-ligero.js"></script>
+<script src="js/visor.js"></script>
+<script src="js/pago.js"></script>
+</body>
+</html>
